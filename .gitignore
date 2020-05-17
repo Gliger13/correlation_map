@@ -1,0 +1,9 @@
+.git/
+# Ignoring pycaches
+__pycache__/
+# Ignoring differents python interpretator and venv files
+.spec
+.idea/
+venv/
+# Ignoring images for tests
+images/
