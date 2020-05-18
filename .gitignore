@@ -1,9 +1,14 @@
 .git/
 # Ignoring pycaches
 __pycache__/
+correlation_map/__pycache__/
+correlation_map/gui_forms/__pycache__/
 # Ignoring differents python interpretator and venv files
 .spec
-.idea/
+correlation_map.idea/
 venv/
 # Ignoring images for tests
 images/
+# Ignoring execute file
+dist/
+build/
