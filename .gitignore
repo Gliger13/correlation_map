@@ -1,3 +1,7 @@
+# Ignoring my commits
+commits/
+# Ignoring .idea
+.idea/
 .git/
 # Ignoring pycaches
 __pycache__/
