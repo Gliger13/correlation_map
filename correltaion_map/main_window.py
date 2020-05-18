@@ -1,23 +1,25 @@
+import logging
 import os
 import sys
+import traceback
 
 import cv2
 from PyQt5 import QtWidgets
 
+import author_window
 import correlation_process
 import img_process
 import select_window
-import author_window
 from gui_forms import main_window
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def __init__(self):
-        # Это здесь нужно для доступа к переменным, методам
-        # и т.д. в файле design.py
         self.user = UserActions()
         super().__init__()
-        self.setupUi(self)  # Это нужно для инициализации нашего дизайна
+        self.setupUi(self)
         self.setWindowTitle('Параметры обработки изображений')
         self.action_author.triggered.connect(self.show_author)
         # Start calculation
@@ -50,56 +52,80 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         region_dialog.exec_()
 
     def _calculation(self):
+        images_to_show = []
+        image_titles = []
         image1 = cv2.imread(self.user.image1_path)
         image2 = cv2.imread(self.user.image2_path)
+        logging.debug('Loaded images')
 
         if self.user.show_src:
-            self.update_progress("показ исходного изображения")
-            cv2.imshow("Source image", image1)
+            images_to_show.append(image1)
+            image_titles.append("Исходное изображение")
         if self.user.show_new:
-            self.update_progress("показ нового изображения")
-            cv2.imshow("New image", image2)
+            images_to_show.append(image2)
+            image_titles.append("Новое изображение")
 
         if self.user.flag_autorotate:
             lines_count = int(self.spinBox.text())
             self.update_progress("нахождение угла поворота")
-            theta = img_process.find_theta(image1, image2, is_show=self.user.show_detected, lines=lines_count)
+            theta, detected_img = img_process.find_theta(image1, image2, lines=lines_count)
+            logging.debug('Angle found')
             self.update_progress("переворот нового изображения")
             image2 = img_process.rotate_img(image2, theta)
+            logging.debug('Image rotated')
+            if self.user.show_detected:
+                images_to_show.append(detected_img)
+                image_titles.append("Процесс нахождения угла")
             if self.user.show_new_rot:
-                self.update_progress("показ повернутого изображения")
-                cv2.imshow("Rotated new image", image2)
+                images_to_show.append(image2)
+                image_titles.append("Повернутое новое относительно исходного")
 
         if self.user.flag_select:
-            if not (not self.user.x1 or not self.user.y1 or
-                    not self.user.x2 or not self.user.y2):
+            if self.user.x1 and self.user.y1 and self.user.x2 and self.user.y2:
                 top_left = self.user.x1, self.user.y1
                 bottom_right = self.user.x2, self.user.y2
                 self.update_progress("обрезка исходного изображения")
-                image1 = img_process.get_image_zone(image1, top_left, bottom_right)
                 if self.user.show_src_sel:
-                    self.update_progress("показ обрезанной части")
-                    cv2.imshow("Selected region on new image", image2)
+                    image = img_process.select_region(self.user.image1_path, top_left, bottom_right)
+                    images_to_show.append(image)
+                    image_titles.append("Выбранная область на исходном")
+                image1 = img_process.get_image_zone(image1, top_left, bottom_right)
+                logging.debug('Image cut')
+                if self.user.show_src_sel:
+                    images_to_show.append(image1)
+                    image_titles.append("Обрезанная область исходного")
 
         if self.user.flag_find:
             self.update_progress("поиск исх. в новом")
-            image2_found, image2 = correlation_process.find_and_cut(image2, image1, self.user.correlation)
-            if self.user.show_new_find:
-                self.update_progress("показ найденной области")
-                cv2.imshow("Image with region found by correlation", image2_found)
-            if self.user.show_new_sel:
-                self.update_progress("показ найденной области")
-                cv2.imshow("Region that found by correlation", image2)
+            if image1.shape[0] <= image2.shape[0] and image1.shape[1] <= image2.shape[1]:
+                image2_found, image2 = correlation_process.find_and_cut(image2, image1, self.user.correlation)
+                logging.debug('Part of source was found')
+                if self.user.show_new_find:
+                    images_to_show.append(image2_found)
+                    image_titles.append("Найденная область благодаря корреляции")
+                if self.user.show_new_sel:
+                    images_to_show.append(image2)
+                    image_titles.append("Обрезанная найденная область благодаря корреляции")
+            else:
+                self.label.setText('Поиск невозможен. Первое изображение больше второго.')
+                self.label.setStyleSheet('color: red;')
 
         if self.user.show_correlation_map:
             delim = int(self.spinBox_2.text())
             self.update_progress("начало построение карты")
+            logging.debug('Correlation map: start process')
             result_map = correlation_process.corr_map(image1, image2, delim, self.user.correlation)
+            logging.debug('Correlation map: end process')
             self.user.progress = 99 - self.user.progress
             self.update_progress("загрузка результатов в виде графика")
             correlation_process.view_map(result_map)
+            logging.debug('Correlation map showed')
+        self.user.progress = 100
+        img_process.show_images(images_to_show, image_titles)
 
     def start_calculations(self):
+        self.label.setText('Параметры обработки изображения')
+        self.label.setStyleSheet('color: black;')
         self.user.progress = 0
         self.update_progress('начало обработки')
         if not self.textBrowser_1.toPlainText():
@@ -150,15 +176,16 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self._calculation()
         self.user.progress = 100
         self.update_progress("обработка закончена")
+        self.user.reset_choices()
 
     def chose_file_2(self):
-        # self.listWidget.clear()  # На случай, если в списке уже есть элементы
+        self.textBrowser_1.clear()
         image_path = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите исходное изображение")[0]
         self.textBrowser_1.append(os.path.basename(image_path))  # Засунуть в текстовый блок
         self.user.image1_path = image_path
 
     def chose_file_3(self):
-        # self.listWidget.clear()  # На случай, если в списке уже есть элементы
+        self.textBrowser_2.clear()
         image_path = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите новое изображение")[0]
         self.textBrowser_2.append(os.path.basename(image_path))  # Засунуть в текстовый блок
         self.user.image2_path = image_path
@@ -191,12 +218,36 @@ class UserActions:
         self.show_detected = False
         self.show_correlation_map = False
 
+    def reset_choices(self):
+        self.correlation = None
+        # Image process
+        self.flag_autorotate = False
+        self.flag_select = False
+        self.flag_find = False
+        # Images to show
+        self.show_src = False
+        self.show_src_sel = False
+        self.show_new = False
+        self.show_new_rot = False
+        self.show_new_find = False
+        self.show_new_sel = False
+        self.show_detected = False
+        self.show_correlation_map = False
+
 
 def main():
+    sys.excepthook = excepthook
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
     app.exec_()
+
+
+def excepthook(exc_type, exc_value, exc_tb):
+    """For debug PyQT5 projects"""
+    tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+    print("error catched!:", tb)
+    QtWidgets.QApplication.quit()
 
 
 if __name__ == '__main__':

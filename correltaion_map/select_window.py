@@ -13,9 +13,9 @@ class DialogRegionSettings(QtWidgets.QDialog, region.Ui_Dialog):
         self.setWindowTitle('Укажите область для сравнения')
         self.pushButton.clicked.connect(self.show_image)
         self.x1 = self.lineEdit.setText(str(self.current_user.x1))
-        self.y1 = self.lineEdit_2.setText(str(self.current_user.x1))
-        self.x2 = self.lineEdit_3.setText(str(self.current_user.x1))
-        self.y2 = self.lineEdit_4.setText(str(self.current_user.x1))
+        self.y1 = self.lineEdit_2.setText(str(self.current_user.y1))
+        self.x2 = self.lineEdit_3.setText(str(self.current_user.x2))
+        self.y2 = self.lineEdit_4.setText(str(self.current_user.y2))
         self.pushButton_2.clicked.connect(self.end_dialog)
 
     def end_dialog(self):
@@ -53,15 +53,15 @@ class DialogRegionSettings(QtWidgets.QDialog, region.Ui_Dialog):
         return False
 
     def show_image(self):
-        image = cv2.imread(self.current_user.image1_path)
-        if not self.save_corr_input():
-            cv2.imshow("Input image", image)
-            return
         if not self.current_user.image1_path:
             self.label.setText('Изображение на найдено!')
             self.label.setStyleSheet("background-color: red;")
             return
+        image = cv2.imread(self.current_user.image1_path)
+        if not self.save_corr_input():
+            img_process.view_image("Input image", image)
+            return
         top_left = (self.current_user.x1, self.current_user.y1)
         bottom_right = (self.current_user.x2, self.current_user.y2)
         image = img_process.select_region(self.current_user.image1_path, top_left, bottom_right)
-        cv2.imshow("Selected region", image)
+        img_process.view_image("Selected region", image)

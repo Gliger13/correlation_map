@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def find_theta(img1, img2, is_show=False, lines=0) -> float:
+def find_theta(img1, img2, lines=0):
     """
     Return the angle of rotation of the img2 relative to img1
     """
@@ -17,21 +17,19 @@ def find_theta(img1, img2, is_show=False, lines=0) -> float:
     matches = bf.match(des1, des2)
     matches = sorted(matches, key=lambda x: x.distance)
     # Show both images with the result work of descriptor
-    if is_show:
-        if not lines:
-            lines = 0
-        elif lines > len(matches):
-            lines = matches
-        img3 = 0
-        img3 = cv2.drawMatches(img1, kpt1, img2, kpt2, matches[:lines], img3, flags=2)
-        plt.imshow(img3), plt.show()
+    if not lines:
+        lines = 0
+    elif lines > len(matches):
+        lines = matches
+    img3 = 0
+    img3 = cv2.drawMatches(img1, kpt1, img2, kpt2, matches[:lines], img3, flags=2)
     # Calculation angle
     src_pts = np.float32([kpt1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
     dst_pts = np.float32([kpt2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
 
     matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
     theta = - math.atan2(matrix[0, 1], matrix[0, 0]) * 180 / math.pi
-    return theta
+    return theta, img3
 
 
 def rotate_img(image, theta: float):
@@ -68,9 +66,23 @@ def mean_intensity(img) -> float:
     return m_int / img.size
 
 
-def view_image(img):
-    """Show image"""
-    cv2.imshow("Image", img)
+def view_image(name, img):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    fig = plt.figure()
+    a = fig.add_subplot()
+    plt.imshow(img)
+    a.set_title(name)
+    plt.show()
+
+
+def show_images(images, titles):
+    for n, (image, title) in enumerate(zip(images, titles)):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        fig = plt.figure()
+        a = fig.add_subplot()
+        a.set_title(title)
+        plt.imshow(image)
+        plt.show()
 
 
 def select_region(image_path, top_left, bottom_right):
