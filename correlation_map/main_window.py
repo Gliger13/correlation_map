@@ -57,7 +57,12 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         image1 = cv2.imread(self.user.image1_path)
         image2 = cv2.imread(self.user.image2_path)
         logging.debug('Loaded images')
-
+        if not image1.any():
+            self.show_error("Не удалось загрузить исходное изображение")
+            return
+        if not image2.any():
+            self.show_error("Не удалось загрузить новое изображение")
+            return
         if self.user.show_src:
             images_to_show.append(image1)
             image_titles.append("Исходное изображение")
@@ -107,8 +112,8 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     images_to_show.append(image2)
                     image_titles.append("Обрезанная найденная область благодаря корреляции")
             else:
-                self.label.setText('Поиск невозможен. Первое изображение больше второго.')
-                self.label.setStyleSheet('color: red;')
+                self.show_error('Поиск невозможен. Первое изображение больше второго.')
+                return
 
         if self.user.show_correlation_map:
             delim = int(self.spinBox_2.text())
@@ -122,6 +127,10 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             logging.debug('Correlation map showed')
         self.user.progress = 100
         img_process.show_images(images_to_show, image_titles)
+
+    def show_error(self, text):
+        self.label.setText(text)
+        self.label.setStyleSheet('color: red;')
 
     def start_calculations(self):
         self.label.setText('Параметры обработки изображения')
