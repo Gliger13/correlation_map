@@ -18,4 +18,4 @@ The program divides the two images into identical pieces of the size that was se
 # Author
 Made by:
 Andrey Zanevskiy (@Gliger13), Belarus
-As course work for Belarusian State University faculty of radiiophysics
+As course work for Belarusian State University faculty of Radiophysics and Computer Technology
