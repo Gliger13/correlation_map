@@ -94,7 +94,7 @@ def select_region(image_path, top_left, bottom_right):
 def get_image_zone(image, top_left, bottom_right):
     x1, y1 = top_left
     x2, y2 = bottom_right
-    return image[x1:x2, y1:y2]
+    return image[y1:y2, x1:x2]
 
 
 def img_to_matrix(img):
