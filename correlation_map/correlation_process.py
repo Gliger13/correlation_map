@@ -132,7 +132,7 @@ def view_map(c_map):
             y_array.append(j)
             z_array.append(c_map[i, j])
     ax = plt.axes(projection='3d')
-    ax.plot_trisurf(x_array, y_array, z_array, linewidth=0.1, antialiased=True, color='r')
+    ax.plot_trisurf(x_array, y_array, z_array, linewidth=0.1, antialiased=True, cmap='magma')
     ax.set_title('Correlation map')
     plt.show()
     return x_array, y_array, z_array
