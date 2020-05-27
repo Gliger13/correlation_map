@@ -1,18 +1,22 @@
-# Ignoring my commits
-commits/
-# Ignoring .idea
-.idea/
-.git/
-# Ignoring pycaches
+# Byte-compiled
 __pycache__/
-correlation_map/__pycache__/
-correlation_map/gui_forms/__pycache__/
-# Ignoring differents python interpretator and venv files
-.spec
-correlation_map.idea/
-venv/
-# Ignoring images for tests
-images/
-# Ignoring execute file
+
+# Distribution / packaging / Pyinstaller
 dist/
 build/
+.spec
+
+# Virtualenv
+venv/
+
+# PyCharm
+.idea/
+
+# Git
+.git/
+
+# My commits
+commits/
+
+# Tests images
+images/
