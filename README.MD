@@ -1,5 +1,7 @@
 # Correlation Map
 
+[![Generic badge](https://img.shields.io/badge/status-ready-green.svg)](https://shields.io/)  [![Generic badge](https://img.shields.io/badge/version-0.1.0-green.svg)](https://shields.io/)
+
 Correlation Map - project with a GUI for creating correlation maps of two images.
 
 ### Preprocess:
