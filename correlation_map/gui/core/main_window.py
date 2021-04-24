@@ -6,11 +6,9 @@ import traceback
 import cv2
 from PyQt5 import QtWidgets
 
-import author_window
-import correlation_process
-import img_process
-import select_window
-from gui_forms import main_window
+from core import img_process, correlation_process
+from gui.core import select_window, author_window
+from gui.windows import main_window
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -257,7 +255,3 @@ def excepthook(exc_type, exc_value, exc_tb):
     tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
     print("error catched!:", tb)
     QtWidgets.QApplication.quit()
-
-
-if __name__ == '__main__':
-    main()

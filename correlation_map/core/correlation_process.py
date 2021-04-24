@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-import img_process
+from core import img_process
 
 logging.basicConfig(level=logging.DEBUG)
 

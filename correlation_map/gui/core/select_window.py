@@ -1,8 +1,8 @@
 import cv2
 from PyQt5 import QtWidgets
 
-import img_process
-from gui_forms import region
+from core import img_process
+from gui.windows import region
 
 
 class DialogRegionSettings(QtWidgets.QDialog, region.Ui_Dialog):
