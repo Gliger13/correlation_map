@@ -7,6 +7,7 @@ import cv2
 from PyQt5 import QtWidgets
 
 from core import img_process, correlation_process
+from core.user import UserActions
 from gui.core import select_window, author_window
 from gui.windows import main_window
 
@@ -196,50 +197,6 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         image_path = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите новое изображение")[0]
         self.textBrowser_2.append(os.path.basename(image_path))  # Засунуть в текстовый блок
         self.user.image2_path = image_path
-
-
-class UserActions:
-    def __init__(self):
-        self.progress = 0
-        self.image1_path = None
-        # Select region of image1
-        self.x1 = None
-        self.y1 = None
-        self.x2 = None
-        self.y2 = None
-
-        self.image2_path = None
-        # Type of correlation
-        self.correlation = None
-        # Image process
-        self.flag_autorotate = False
-        self.flag_select = False
-        self.flag_find = False
-        # Images to show
-        self.show_src = False
-        self.show_src_sel = False
-        self.show_new = False
-        self.show_new_rot = False
-        self.show_new_find = False
-        self.show_new_sel = False
-        self.show_detected = False
-        self.show_correlation_map = False
-
-    def reset_choices(self):
-        self.correlation = None
-        # Image process
-        self.flag_autorotate = False
-        self.flag_select = False
-        self.flag_find = False
-        # Images to show
-        self.show_src = False
-        self.show_src_sel = False
-        self.show_new = False
-        self.show_new_rot = False
-        self.show_new_find = False
-        self.show_new_sel = False
-        self.show_detected = False
-        self.show_correlation_map = False
 
 
 def main():
