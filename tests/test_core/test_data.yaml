@@ -1,0 +1,9 @@
+common:
+  test_image_path: &test_image_path "images/test_images/noao-m48.tif"
+  test_gray_image_path: &test_gray_image_path "images/test_images/noao-m48_gray.tif"
+
+test_sets:
+  test_gray_transformation:
+    data:
+      - test_image_path: *test_image_path
+        test_gray_image_path: *test_gray_image_path
