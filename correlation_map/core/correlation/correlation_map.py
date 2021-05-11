@@ -32,8 +32,8 @@ class CorrelationMap:
         return c1, c2
 
     def build_correlation_map(self):
-        gray_source_matrix = ImageBuilder.transform_image_to_gray(self.source_image).image.image
-        gray_destination_matrix = ImageBuilder.transform_image_to_gray(self.destination_image).image.image
+        gray_source_matrix = ImageBuilder.transform_image_to_gray(self.source_image).image
+        gray_destination_matrix = ImageBuilder.transform_image_to_gray(self.destination_image).image
 
         h1, w1, _ = gray_source_matrix.shape
         h2, w2, _ = gray_destination_matrix.shape

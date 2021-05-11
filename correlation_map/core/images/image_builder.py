@@ -19,7 +19,7 @@ class ImageBuilder:
         for column_number, column in enumerate(gray_image):
             for row_number, pixel in enumerate(column):
                 gray_image[column_number, row_number] = cls.__make_gray_pixel(pixel)
-        return Image.create_image(image)
+        return Image.create_image(gray_image)
 
     @classmethod
     def rotate_image(cls, image: Image, angle: float) -> Image:
