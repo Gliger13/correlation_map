@@ -6,8 +6,8 @@ import traceback
 import cv2
 from PyQt5 import QtWidgets
 
-from core import img_process, correlation_process
-from core.user import UserActions
+from core.correlation.correlation_map_process_builder import CorrelationMapProcessBuilder
+from core.user.user import UserActions
 from gui.core import select_window, author_window
 from gui.windows import main_window
 
@@ -51,81 +51,86 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         region_dialog.exec_()
 
     def _calculation(self):
-        images_to_show = []
-        image_titles = []
-        image1 = cv2.imread(self.user.image1_path)
-        image2 = cv2.imread(self.user.image2_path)
-        logging.debug('Loaded images')
-        if not image1.any():
-            self.show_error("Не удалось загрузить исходное изображение")
-            return
-        if not image2.any():
-            self.show_error("Не удалось загрузить новое изображение")
-            return
-        if self.user.show_src:
-            images_to_show.append(image1)
-            image_titles.append("Исходное изображение")
-        if self.user.show_new:
-            images_to_show.append(image2)
-            image_titles.append("Новое изображение")
+        process = CorrelationMapProcessBuilder(self.user)
+        correlation_map = process.build_correlation_map()
+        correlation_map.view_correlation_map()
 
-        if self.user.flag_autorotate:
-            lines_count = int(self.spinBox.text())
-            self.update_progress("нахождение угла поворота")
-            theta, detected_img = img_process.find_theta(image1, image2, lines=lines_count)
-            logging.debug('Angle found')
-            self.update_progress("переворот нового изображения")
-            image2 = img_process.rotate_img(image2, theta)
-            logging.debug('Image rotated')
-            if self.user.show_detected:
-                images_to_show.append(detected_img)
-                image_titles.append("Процесс нахождения угла")
-            if self.user.show_new_rot:
-                images_to_show.append(image2)
-                image_titles.append("Повернутое новое относительно исходного")
-
-        if self.user.flag_select:
-            if self.user.x1 and self.user.y1 and self.user.x2 and self.user.y2:
-                top_left = self.user.x1, self.user.y1
-                bottom_right = self.user.x2, self.user.y2
-                self.update_progress("обрезка исходного изображения")
-                if self.user.show_src_sel:
-                    image = img_process.select_region(self.user.image1_path, top_left, bottom_right)
-                    images_to_show.append(image)
-                    image_titles.append("Выбранная область на исходном")
-                image1 = img_process.get_image_zone(image1, top_left, bottom_right)
-                logging.debug('Image cut')
-                if self.user.show_src_sel:
-                    images_to_show.append(image1)
-                    image_titles.append("Обрезанная область исходного")
-
-        if self.user.flag_find:
-            self.update_progress("поиск исх. в новом")
-            if image1.shape[0] <= image2.shape[0] and image1.shape[1] <= image2.shape[1]:
-                image2_found, image2 = correlation_process.find_and_cut(image2, image1, self.user.correlation)
-                logging.debug('Part of source was found')
-                if self.user.show_new_find:
-                    images_to_show.append(image2_found)
-                    image_titles.append("Найденная область благодаря корреляции")
-                if self.user.show_new_sel:
-                    images_to_show.append(image2)
-                    image_titles.append("Обрезанная найденная область благодаря корреляции")
-            else:
-                self.show_error('Поиск невозможен. Первое изображение больше второго.')
-                return
-
-        if self.user.show_correlation_map:
-            delim = int(self.spinBox_2.text())
-            self.update_progress("начало построение карты")
-            logging.debug('Correlation map: start process')
-            result_map = correlation_process.corr_map(image1, image2, delim, self.user.correlation)
-            logging.debug('Correlation map: end process')
-            self.user.progress = 99 - self.user.progress
-            self.update_progress("загрузка результатов в виде графика")
-            correlation_process.view_map(result_map)
-            logging.debug('Correlation map showed')
-        self.user.progress = 100
-        img_process.show_images(images_to_show, image_titles)
+    # def _calculation(self):
+    #     images_to_show = []
+    #     image_titles = []
+    #     image1 = cv2.imread(self.user.image1_path)
+    #     image2 = cv2.imread(self.user.image2_path)
+    #     logging.debug('Loaded images')
+    #     if not image1.any():
+    #         self.show_error("Не удалось загрузить исходное изображение")
+    #         return
+    #     if not image2.any():
+    #         self.show_error("Не удалось загрузить новое изображение")
+    #         return
+    #     if self.user.show_src:
+    #         images_to_show.append(image1)
+    #         image_titles.append("Исходное изображение")
+    #     if self.user.show_new:
+    #         images_to_show.append(image2)
+    #         image_titles.append("Новое изображение")
+    #
+    #     if self.user.flag_autorotate:
+    #         lines_count = int(self.spinBox.text())
+    #         self.update_progress("нахождение угла поворота")
+    #         theta, detected_img = img_process.find_theta(image1, image2, lines=lines_count)
+    #         logging.debug('Angle found')
+    #         self.update_progress("переворот нового изображения")
+    #         image2 = img_process.rotate_img(image2, theta)
+    #         logging.debug('Image rotated')
+    #         if self.user.show_detected:
+    #             images_to_show.append(detected_img)
+    #             image_titles.append("Процесс нахождения угла")
+    #         if self.user.show_new_rot:
+    #             images_to_show.append(image2)
+    #             image_titles.append("Повернутое новое относительно исходного")
+    #
+    #     if self.user.flag_select:
+    #         if self.user.x1 and self.user.y1 and self.user.x2 and self.user.y2:
+    #             top_left = self.user.x1, self.user.y1
+    #             bottom_right = self.user.x2, self.user.y2
+    #             self.update_progress("обрезка исходного изображения")
+    #             if self.user.show_src_sel:
+    #                 image = img_process.select_region(self.user.image1_path, top_left, bottom_right)
+    #                 images_to_show.append(image)
+    #                 image_titles.append("Выбранная область на исходном")
+    #             image1 = img_process.get_image_zone(image1, top_left, bottom_right)
+    #             logging.debug('Image cut')
+    #             if self.user.show_src_sel:
+    #                 images_to_show.append(image1)
+    #                 image_titles.append("Обрезанная область исходного")
+    #
+    #     if self.user.flag_find:
+    #         self.update_progress("поиск исх. в новом")
+    #         if image1.shape[0] <= image2.shape[0] and image1.shape[1] <= image2.shape[1]:
+    #             image2_found, image2 = correlation_process.find_and_cut(image2, image1, self.user.correlation)
+    #             logging.debug('Part of source was found')
+    #             if self.user.show_new_find:
+    #                 images_to_show.append(image2_found)
+    #                 image_titles.append("Найденная область благодаря корреляции")
+    #             if self.user.show_new_sel:
+    #                 images_to_show.append(image2)
+    #                 image_titles.append("Обрезанная найденная область благодаря корреляции")
+    #         else:
+    #             self.show_error('Поиск невозможен. Первое изображение больше второго.')
+    #             return
+    #
+    #     if self.user.show_correlation_map:
+    #         delim = int(self.spinBox_2.text())
+    #         self.update_progress("начало построение карты")
+    #         logging.debug('Correlation map: start process')
+    #         result_map = correlation_process.corr_map(image1, image2, delim, self.user.correlation)
+    #         logging.debug('Correlation map: end process')
+    #         self.user.progress = 99 - self.user.progress
+    #         self.update_progress("загрузка результатов в виде графика")
+    #         correlation_process.view_map(result_map)
+    #         logging.debug('Correlation map showed')
+    #     self.user.progress = 100
+    #     img_process.show_images(images_to_show, image_titles)
 
     def show_error(self, text):
         self.label.setText(text)

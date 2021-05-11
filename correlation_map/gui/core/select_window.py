@@ -1,7 +1,6 @@
 import cv2
 from PyQt5 import QtWidgets
 
-from core import img_process
 from gui.windows import region
 
 
@@ -53,15 +52,16 @@ class DialogRegionSettings(QtWidgets.QDialog, region.Ui_Dialog):
         return False
 
     def show_image(self):
-        if not self.current_user.image1_path:
-            self.label.setText('Изображение на найдено!')
-            self.label.setStyleSheet("background-color: red;")
-            return
-        image = cv2.imread(self.current_user.image1_path)
-        if not self.save_corr_input():
-            img_process.view_image("Input image", image)
-            return
-        top_left = (self.current_user.x1, self.current_user.y1)
-        bottom_right = (self.current_user.x2, self.current_user.y2)
-        image = img_process.select_region(self.current_user.image1_path, top_left, bottom_right)
-        img_process.view_image("Selected region", image)
+        pass
+        # if not self.current_user.image1_path:
+        #     self.label.setText('Изображение на найдено!')
+        #     self.label.setStyleSheet("background-color: red;")
+        #     return
+        # image = cv2.imread(self.current_user.image1_path)
+        # if not self.save_corr_input():
+        #     img_process.view_image("Input image", image)
+        #     return
+        # top_left = (self.current_user.x1, self.current_user.y1)
+        # bottom_right = (self.current_user.x2, self.current_user.y2)
+        # image = img_process.select_region(self.current_user.image1_path, top_left, bottom_right)
+        # img_process.view_image("Selected region", image)

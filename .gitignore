@@ -15,8 +15,5 @@ venv/
 # Git
 .git/
 
-# My commits
-commits/
-
 # Tests images
-images/
+/images/

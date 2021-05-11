@@ -1,3 +1,6 @@
+from typing import Tuple
+
+
 class UserActions:
     def __init__(self):
         self.progress = 0
@@ -7,6 +10,8 @@ class UserActions:
         self.y1 = None
         self.x2 = None
         self.y2 = None
+
+        self.delim = None
 
         self.image2_path = None
         # Type of correlation
@@ -40,3 +45,6 @@ class UserActions:
         self.show_new_sel = False
         self.show_detected = False
         self.show_correlation_map = False
+
+    def get_scale_points(self) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+        return (self.x1, self.y1), (self.x2, self.y2)
