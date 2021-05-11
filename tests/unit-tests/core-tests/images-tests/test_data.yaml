@@ -1,0 +1,19 @@
+common:
+  test_image_path: &test_image_path "images/test_images/noao-m48.tif"
+  test_gray_image_path: &test_gray_image_path "images/test_images/noao-m48_gray.tif"
+  test_rotate_image_path: &test_rotate_image_path "images/test_images/metal.jpg"
+  test_rotated_image_path: &test_rotated_image_path "images/test_images/rotated_metal.jpg"
+
+test_sets:
+  test_gray_transformation:
+    data:
+      - source_image_path: *test_image_path
+        expected_image_path: *test_gray_image_path
+  test_rotate_image:
+    data:
+      - source_image_path: *test_rotate_image_path
+        expected_image_path: *test_rotated_image_path
+  test_find_image_rotation_angle:
+    data:
+      - source_image_path: *test_rotate_image_path
+        expected_image_path: *test_rotated_image_path
