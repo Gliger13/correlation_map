@@ -8,6 +8,5 @@ class ImageContainer:
     def add(self, image: Image):
         if image.image_type in ImageTypes:
             self.images[image.image_type] = image
-        else:
-            raise TypeError(f"Image type {image.image_type} not supported")
+        raise TypeError(f"Image type {image.image_type} not supported")
 

@@ -1,4 +1,3 @@
-import cv2
 from PyQt5 import QtWidgets
 
 from gui.windows import region
