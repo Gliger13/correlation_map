@@ -1,12 +1,15 @@
+from typing import Any, Dict
+
 from core.images.image import Image, ImageTypes
+from core.tools.common import MetaSingleton
 
 
-class ImageContainer:
-    def __init__(self, images: dict = None):
-        self.images = images if images else {}
+class ImageContainer(metaclass=MetaSingleton):
+    __images: Dict[ImageTypes, Any] = {}
 
-    def add(self, image: Image):
+    @classmethod
+    def add(cls, image: Image):
         if image.image_type in ImageTypes:
-            self.images[image.image_type] = image
+            cls.__images[image.image_type] = image
         raise TypeError(f"Image type {image.image_type} not supported")
 
