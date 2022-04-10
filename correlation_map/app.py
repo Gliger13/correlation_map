@@ -2,10 +2,10 @@
 
 from core.config.config_check import check_required_environment_variables
 from gui.manager import WindowsManager
-from gui.tools.logger import app_loger
+from gui.tools.logger import app_logger
 
 if __name__ == '__main__':
-    app_loger.debug("Starting correlation map application")
+    app_logger.debug("Starting correlation map application")
     check_required_environment_variables()
     windows_manager = WindowsManager()
     windows_manager.start_application()

@@ -34,9 +34,10 @@ class ApplicationLogger(logging.Logger):
             console_handler.setLevel(logging.DEBUG)
         else:
             console_handler.setLevel(logging.INFO)
-        console_format = logging.Formatter('%(asctime)-8s | %(levelname)-8s | %(message)s', "%H:%M:%S")
+        console_format = logging.Formatter(
+            "{asctime:^8} | {levelname:^8} | {module}: {message}", "%H:%M:%S", style="{")
         console_handler.setFormatter(console_format)
         return console_handler
 
 
-app_loger = ApplicationLogger("app")
+app_logger = ApplicationLogger("app")

@@ -1,11 +1,10 @@
 """Contain factory to get different project paths"""
-import logging
 import os
 from functools import lru_cache
 from typing import Optional
 
 from core.config.variables import ProjectFileMapping
-from gui.tools.logger import app_loger
+from gui.tools.logger import app_logger
 
 
 class ProjectPathFactory:
@@ -39,7 +38,7 @@ class ProjectPathFactory:
             dirs[:] = [directory for directory in dirs if directory not in ProjectFileMapping.EXCLUDED_DIRS]
             if dir_name in dirs:
                 return os.path.join(root_path, dir_name)
-        app_loger.warning("Unable to get directory path in the project by directory name %s. Not found", dir_name)
+        app_logger.warning("Unable to get directory path in the project by directory name %s. Not found", dir_name)
         return None
 
     @classmethod
@@ -52,5 +51,5 @@ class ProjectPathFactory:
         """
         if static_directory_path := cls.get_dir_path_in_project_by_name(ProjectFileMapping.STATIC_FILES_DIR_NAME):
             return os.path.join(static_directory_path, static_file_name)
-        app_loger.error("Unable to get static file path with name %s. Static directory not found.", static_file_name)
+        app_logger.error("Unable to get static file path with name %s. Static directory not found.", static_file_name)
         return None

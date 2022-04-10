@@ -1,15 +1,16 @@
 """Module contains class for main windows"""
-import os
 
-import cv2
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QComboBox, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QWidget
 
 from core.config.variables import ProjectFileMapping
+from core.images.image import Image, ImageTypes
+from core.images.image_container import ImageContainer
 from gui.core.main.execution_toolbar import ExecutionToolBar
 from gui.core.main.file_toolbar import FileToolBar
-from gui.core.main.image_widget import ImageWidget
+from gui.core.main.image_main_layout import ImageMainLayout
 from gui.core.main.main_menu import MainMenu
+from gui.tools.logger import app_logger
 from gui.tools.path_factory import ProjectPathFactory
 
 
@@ -24,8 +25,10 @@ class MainWindow(QMainWindow):
         self.execution_tool_bar = self.__set_execution_tool_bar()
         self.main_widget = self.__set_main_widget()
         self.main_layout = self.__set_main_layout()
-        self.source_image_widget = self.__set_image_widget()
-        self.destination_image_widget = self.__set_image_widget()
+        self.__add_default_image_to_image_container()
+        self.active_image_layouts: list[ImageMainLayout] = [
+            self.__set_image_main_layout(), self.__set_image_main_layout()
+        ]
 
     def __set_main_window_properties(self):
         """Set different global main window properties
@@ -34,6 +37,7 @@ class MainWindow(QMainWindow):
         - windows size = full screen
         """
         self.setWindowState(Qt.WindowMaximized)
+        app_logger.debug("Main windows maximized")
 
     def __set_menu_bar(self) -> MainMenu:
         """Configure menu bar for main window and return it
@@ -42,6 +46,7 @@ class MainWindow(QMainWindow):
         """
         main_menu_bar = MainMenu()
         self.setMenuBar(main_menu_bar)
+        app_logger.debug("Main menubar configured")
         return main_menu_bar
 
     def __set_file_tool_bar(self) -> FileToolBar:
@@ -51,6 +56,7 @@ class MainWindow(QMainWindow):
         """
         file_toolbar = FileToolBar()
         self.addToolBar(file_toolbar)
+        app_logger.debug("File toolbar configured")
         return file_toolbar
 
     def __set_execution_tool_bar(self) -> ExecutionToolBar:
@@ -60,6 +66,7 @@ class MainWindow(QMainWindow):
         """
         execution_toolbar = ExecutionToolBar()
         self.addToolBar(execution_toolbar)
+        app_logger.debug("Execution toolbar configured")
         return execution_toolbar
 
     def __set_main_widget(self) -> QWidget:
@@ -79,15 +86,20 @@ class MainWindow(QMainWindow):
         main_layout = QHBoxLayout(self.main_widget)
         return main_layout
 
-    def __set_image_widget(self) -> QWidget:
-        """Configure image widget"""
-        image_layout = QVBoxLayout(self.main_widget)
-        self.main_layout.addLayout(image_layout)
+    @classmethod
+    def __add_default_image_to_image_container(cls):
+        """Add default image to image container"""
+        app_logger.debug("Loading and adding default image to image container")
+        path_to_default_image = ProjectPathFactory.get_static_file_path(ProjectFileMapping.DEFAULT_IMAGE_NAME)
+        default_image = Image(path_to_default_image, ImageTypes.DEFAULT_IMAGE)
+        ImageContainer.add(default_image)
+        app_logger.debug("Default image added to image container")
 
-        image_chooser = QComboBox()
-        image_layout.addWidget(image_chooser)
-
-        img = cv2.imread(ProjectPathFactory.get_static_file_path("cat.jpg"))
-        image_widget = ImageWidget(img)
-        image_layout.addWidget(image_widget)
-        return image_widget
+    def __set_image_main_layout(self) -> ImageMainLayout:
+        """Configure and return image widget"""
+        app_logger.debug("Configuring image main layout and it's widgets")
+        image_main_layout = ImageMainLayout(self.main_widget)
+        self.main_layout.addLayout(image_main_layout)
+        self.file_toolbar.add_image_layout(image_main_layout)
+        app_logger.debug("Image main layout and it's widgets configured")
+        return image_main_layout

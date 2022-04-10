@@ -3,7 +3,7 @@ import os
 
 from core.config.variables import RequiredEnvironmentVariables
 from core.errors.common import EnvironmentVariablesError, MissedEnvironmentVariableError, WrongEnvironmentVariableError
-from gui.tools.logger import app_loger
+from gui.tools.logger import app_logger
 
 
 def check_required_environment_variables():
@@ -13,7 +13,7 @@ def check_required_environment_variables():
     :raise MissedEnvironmentVariableError: if a required environment variable missed
     :raise WrongEnvironmentVariableError: if an environment variable has the wrong value
     """
-    app_loger.debug("Checking environment variables")
+    app_logger.debug("Checking environment variables")
     errors: list[EnvironmentVariablesError] = []
 
     for required_environment_variable in RequiredEnvironmentVariables:
@@ -32,4 +32,4 @@ def check_required_environment_variables():
             raise errors[0]
         error_message = "\n".join([f"- {error.short_message}" for error in errors])
         raise EnvironmentVariablesError(error_message)
-    app_loger.debug("No environment variable issues found")
+    app_logger.debug("No environment variable issues found")

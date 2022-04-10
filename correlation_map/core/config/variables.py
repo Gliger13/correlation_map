@@ -36,3 +36,5 @@ class ProjectFileMapping:
     RUN_ICON_FILE_NAME = "run_icon.png"
     STOP_ICON_FILE_NAME = "stop_icon.png"
     TERMINATE_ICON_FILE_NAME = "terminate_icon.png"
+
+    DEFAULT_IMAGE_NAME = "default.jpg"
