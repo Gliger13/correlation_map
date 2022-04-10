@@ -1,11 +1,11 @@
 """Contains application main call function"""
-import logging
 
-from core.config.variables import check_required_environment_variables
+from core.config.config_check import check_required_environment_variables
 from gui.manager import WindowsManager
+from gui.tools.logger import app_loger
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    app_loger.debug("Starting correlation map application")
     check_required_environment_variables()
     windows_manager = WindowsManager()
     windows_manager.start_application()
