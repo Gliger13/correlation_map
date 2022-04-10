@@ -1,13 +1,16 @@
 """Module contains class for main windows"""
+import os
+
 import cv2
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QComboBox, QHBoxLayout, QMainWindow, QVBoxLayout, \
-    QWidget
+from PyQt5.QtWidgets import QComboBox, QHBoxLayout, QMainWindow, QVBoxLayout, QWidget
 
+from core.config.variables import ProjectFileMapping
 from gui.core.main.execution_toolbar import ExecutionToolBar
 from gui.core.main.file_toolbar import FileToolBar
 from gui.core.main.image_widget import ImageWidget
 from gui.core.main.main_menu import MainMenu
+from gui.tools.path_factory import ProjectPathFactory
 
 
 class MainWindow(QMainWindow):
@@ -25,8 +28,7 @@ class MainWindow(QMainWindow):
         self.destination_image_widget = self.__set_image_widget()
 
     def __set_main_window_properties(self):
-        """
-        Set different global main window properties
+        """Set different global main window properties
 
         Main window properties to set:
         - windows size = full screen
@@ -34,8 +36,7 @@ class MainWindow(QMainWindow):
         self.setWindowState(Qt.WindowMaximized)
 
     def __set_menu_bar(self) -> MainMenu:
-        """
-        Configure menu bar for main window and returns it
+        """Configure menu bar for main window and return it
 
         :return: configured main menu bar
         """
@@ -44,8 +45,7 @@ class MainWindow(QMainWindow):
         return main_menu_bar
 
     def __set_file_tool_bar(self) -> FileToolBar:
-        """
-        Configure file toolbar for main window
+        """Configure file toolbar for main window
 
         :return: configured file toolbar
         """
@@ -54,8 +54,7 @@ class MainWindow(QMainWindow):
         return file_toolbar
 
     def __set_execution_tool_bar(self) -> ExecutionToolBar:
-        """
-        Configure execution toolbar for main window
+        """Configure execution toolbar for main window
 
         :return: configured execution toolbar
         """
@@ -64,8 +63,7 @@ class MainWindow(QMainWindow):
         return execution_toolbar
 
     def __set_main_widget(self) -> QWidget:
-        """
-        Configure main widget for main window
+        """Configure main widget for main window
 
         :return: main widget
         """
@@ -74,8 +72,7 @@ class MainWindow(QMainWindow):
         return central_widget
 
     def __set_main_layout(self):
-        """
-        Configure main layout for main widget
+        """Configure main layout for main widget
 
         :return: main layout
         """
@@ -83,13 +80,15 @@ class MainWindow(QMainWindow):
         return main_layout
 
     def __set_image_widget(self) -> QWidget:
+        """Configure image widget"""
         image_layout = QVBoxLayout(self.main_widget)
         self.main_layout.addLayout(image_layout)
 
         image_chooser = QComboBox()
         image_layout.addWidget(image_chooser)
 
-        img = cv2.imread("/home/andrei/Projects/Python/correlation_map/correlation_map/cat.jpg")
+        static_dir_path = ProjectPathFactory.get_dir_path_in_project_by_name(ProjectFileMapping.STATIC_FILES_DIR_NAME)
+        img = cv2.imread(os.path.join(static_dir_path, "cat.jpg"))
         image_widget = ImageWidget(img)
         image_layout.addWidget(image_widget)
         return image_widget

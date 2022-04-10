@@ -1,4 +1,4 @@
-"""Contains classes for environment variables"""
+"""Contains classes with constant project variables"""
 from enum import Enum
 from typing import Iterable, Optional
 
@@ -24,3 +24,11 @@ class RequiredEnvironmentVariables(Enum):
         """
         self.variable = variable
         self.possible_values = possible_values
+
+
+class ProjectFileMapping:
+    """Contain main project directories and files names"""
+
+    ROOT_DIR_NAME = "correlation_map"
+    STATIC_FILES_DIR_NAME = "static"
+    EXCLUDED_DIRS = {"venv", ".idea", "__pycache__"}
