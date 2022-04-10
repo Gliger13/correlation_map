@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from core.images.image import Image
+from correlation_map.core.images.image import Image
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -13,7 +13,7 @@ class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, width: int = 5, height: int = 4, dpi: int = 100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
-        super(MplCanvas, self).__init__(fig)
+        super().__init__(fig)
 
 
 class ImageWidget(QWidget):

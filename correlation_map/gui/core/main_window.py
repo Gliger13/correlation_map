@@ -5,12 +5,12 @@ import traceback
 
 from PyQt5 import QtWidgets
 
-from core.correlation.correlation_map_process_builder import CorrelationMapProcessBuilder
-from core.user.user import UserActions
-from gui.core import select_window, author_window
-from gui.core.main.main_window import MainWindow
-from gui.tools.windows_config import WindowsConfig
-from gui.windows import main_window
+from correlation_map.core.correlation.correlation_map_process_builder import CorrelationMapProcessBuilder
+from correlation_map.core.user.user import UserActions
+from correlation_map.gui.core import select_window, author_window
+from correlation_map.gui.core.main.main_window import MainWindow
+from correlation_map.gui.tools.windows_config import WindowsConfig
+from correlation_map.gui.windows import main_window
 
 
 # class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):

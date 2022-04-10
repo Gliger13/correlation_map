@@ -3,15 +3,15 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QWidget
 
-from core.config.variables import ProjectFileMapping
-from core.images.image import Image, ImageTypes
-from core.images.image_container import ImageContainer
-from gui.core.main.execution_toolbar import ExecutionToolBar
-from gui.core.main.file_toolbar import FileToolBar
-from gui.core.main.image_main_layout import ImageMainLayout
-from gui.core.main.main_menu import MainMenu
-from gui.tools.logger import app_logger
-from gui.tools.path_factory import ProjectPathFactory
+from correlation_map.core.config.variables import ProjectFileMapping
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.gui.core.main.execution_toolbar import ExecutionToolBar
+from correlation_map.gui.core.main.file_toolbar import FileToolBar
+from correlation_map.gui.core.main.image_main_layout import ImageMainLayout
+from correlation_map.gui.core.main.main_menu import MainMenu
+from correlation_map.gui.tools.logger import app_logger
+from correlation_map.gui.tools.path_factory import ProjectPathFactory
 
 
 class MainWindow(QMainWindow):

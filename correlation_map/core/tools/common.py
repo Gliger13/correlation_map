@@ -1,3 +1,6 @@
+"""Contains common classes for the whole package"""
+
+
 class MetaSingleton(type):
     """
     Realize pattern Singleton

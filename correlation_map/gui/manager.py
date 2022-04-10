@@ -4,8 +4,8 @@ from traceback import format_exception
 
 from PyQt5 import QtWidgets
 
-from gui.core.main.main_window import MainWindow
-from gui.tools.logger import app_logger
+from correlation_map.gui.core.main.main_window import MainWindow
+from correlation_map.gui.tools.logger import app_logger
 
 
 class WindowsManager:

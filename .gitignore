@@ -4,6 +4,7 @@ __pycache__/
 # Distribution / packaging / Pyinstaller
 dist/
 build/
+correlation_map.egg-info/
 .spec
 
 # Virtualenv
@@ -14,6 +15,9 @@ venv/
 
 # Git
 .git/
+
+# MyPy cache
+.mypy_cache/
 
 # Tests images
 /images/

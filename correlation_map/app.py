@@ -1,8 +1,10 @@
-"""Contains application main call function"""
+#! /usr/local/bin/python3
+# -*- coding: utf-8 -*-
 
-from core.config.config_check import check_required_environment_variables
-from gui.manager import WindowsManager
-from gui.tools.logger import app_logger
+"""Contains application main enter point"""
+from correlation_map.core.config.config_check import check_required_environment_variables
+from correlation_map.gui.manager import WindowsManager
+from correlation_map.gui.tools.logger import app_logger
 
 if __name__ == '__main__':
     app_logger.debug("Starting correlation map application")

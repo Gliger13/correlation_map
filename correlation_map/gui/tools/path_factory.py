@@ -3,8 +3,8 @@ import os
 from functools import lru_cache
 from typing import Optional
 
-from core.config.variables import ProjectFileMapping
-from gui.tools.logger import app_logger
+from correlation_map.core.config.variables import ProjectFileMapping
+from correlation_map.gui.tools.logger import app_logger
 
 
 class ProjectPathFactory:
@@ -34,7 +34,7 @@ class ProjectPathFactory:
         :param dir_name: directory name in project files
         :return: directory path to the given directory in the project
         """
-        for root_path, dirs, filenames in os.walk(cls.get_root_dir_path(), topdown=True):
+        for root_path, dirs, _ in os.walk(cls.get_root_dir_path(), topdown=True):
             dirs[:] = [directory for directory in dirs if directory not in ProjectFileMapping.EXCLUDED_DIRS]
             if dir_name in dirs:
                 return os.path.join(root_path, dir_name)

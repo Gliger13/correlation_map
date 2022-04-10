@@ -4,9 +4,9 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 
-from core.correlation.correlation_maker import CorrelationMaker, CorrelationTypes
-from core.images.image import Image, ImageTypes
-from core.images.image_builder import ImageBuilder
+from correlation_map.core.correlation.correlation_maker import CorrelationMaker, CorrelationTypes
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image_builder import ImageBuilder
 
 
 class CorrelationMap:

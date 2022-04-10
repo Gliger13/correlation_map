@@ -1,9 +1,10 @@
 """Contains a function to check required environment variables"""
 import os
 
-from core.config.variables import RequiredEnvironmentVariables
-from core.errors.common import EnvironmentVariablesError, MissedEnvironmentVariableError, WrongEnvironmentVariableError
-from gui.tools.logger import app_logger
+from correlation_map.core.config.variables import RequiredEnvironmentVariables
+from correlation_map.core.errors.common import EnvironmentVariablesError, MissedEnvironmentVariableError,\
+    WrongEnvironmentVariableError
+from correlation_map.gui.tools.logger import app_logger
 
 
 def check_required_environment_variables():

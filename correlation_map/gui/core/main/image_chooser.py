@@ -1,7 +1,7 @@
 """Module contains image chooser combo box model"""
 from PyQt5.QtWidgets import QComboBox
 
-from core.images.image_container import ImageContainer
+from correlation_map.core.images.image_container import ImageContainer
 
 
 class ImageChooserComboBox(QComboBox):

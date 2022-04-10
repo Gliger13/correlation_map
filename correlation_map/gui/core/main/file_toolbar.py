@@ -2,10 +2,10 @@
 
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
-from core.images.image import Image, ImageTypes
-from core.images.image_container import ImageContainer
-from gui.core.main.image_main_layout import ImageMainLayout
-from gui.tools.logger import app_logger
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.gui.core.main.image_main_layout import ImageMainLayout
+from correlation_map.gui.tools.logger import app_logger
 
 
 class FileToolBar(QToolBar):
@@ -20,6 +20,10 @@ class FileToolBar(QToolBar):
         self.__set_save_all_images_action()
 
     def add_image_layout(self, image_layout: ImageMainLayout):
+        """Add image layout for support and maintain if there is a new image
+
+        :param image_layout: image layout to maintain
+        """
         self.__active_image_layouts.append(image_layout)
 
     @classmethod

@@ -1,6 +1,6 @@
 # Correlation Map
 
-[![Generic badge](https://img.shields.io/badge/status-ready-green.svg)](https://shields.io/)  [![Generic badge](https://img.shields.io/badge/version-0.1.0-green.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/status-ready-green.svg)](https://shields.io/)  [![Generic badge](https://img.shields.io/badge/version-1.0.0_pre-green.svg)](https://shields.io/)
 
 Correlation Map - project with a GUI for creating correlation maps of two images.
 
@@ -23,5 +23,5 @@ The program divides the two images into identical pieces of the size that was se
 
 # Author
 Made by:
-Andrey Zanevskiy (@Gliger13), Belarus
-As course work for Belarusian State University faculty of Radiophysics and Computer Technology
+Andrey Zaneuski (@Gliger13), Belarus
+As diploma work for Belarusian State University faculty of Radiophysics and Computer Technology

@@ -4,8 +4,8 @@ from typing import Tuple
 import cv2
 import numpy as np
 
-from core.correlation.correlation_maker import CorrelationCV2Types
-from core.images.image import Image, ImageTypes
+from correlation_map.core.correlation.correlation_maker import CorrelationCV2Types
+from correlation_map.core.images.image import Image, ImageTypes
 
 
 class ImageSelection:

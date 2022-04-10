@@ -2,9 +2,9 @@
 import logging
 from typing import Dict, Optional
 
-from core.images.image import Image, ImageTypes
-from core.tools.common import MetaSingleton
-from gui.tools.logger import app_logger
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.tools.common import MetaSingleton
+from correlation_map.gui.tools.logger import app_logger
 
 
 class ImageContainer(metaclass=MetaSingleton):

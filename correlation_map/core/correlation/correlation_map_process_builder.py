@@ -1,11 +1,9 @@
-from enum import Enum
-
-from core.correlation.correlation_map import CorrelationMap
-from core.images.image import Image, ImageTypes
-from core.images.image_builder import ImageBuilder
-from core.images.image_container import ImageContainer
-from core.images.images_describer import ImagesDescriber
-from core.user.user import UserActions
+from correlation_map.core.correlation.correlation_map import CorrelationMap
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image_builder import ImageBuilder
+from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.images.images_describer import ImagesDescriber
+from correlation_map.core.user.user import UserActions
 
 
 class CorrelationMapProcessBuilder:

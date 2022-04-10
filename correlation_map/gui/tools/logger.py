@@ -2,7 +2,7 @@
 import logging
 import os
 
-from core.config.variables import EnvironmentVariables
+from correlation_map.core.config.variables import EnvironmentVariables
 
 
 class ApplicationLogger(logging.Logger):

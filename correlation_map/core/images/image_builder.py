@@ -3,8 +3,8 @@ from typing import Tuple
 import cv2
 import numpy as np
 
-from core.images.image import Image, ImageTypes
-from core.images.images_describer import ImageSelection, ImagesDescriber
+from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.images_describer import ImageSelection, ImagesDescriber
 
 
 class ImageBuilder:

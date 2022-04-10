@@ -1,9 +1,33 @@
+"""Module to setup correlation map package"""
 from setuptools import setup, find_packages
 from os.path import join, dirname
 
+# Package meta-data
+PROJECT_NAME = 'correlation_map'
+PROJECT_VERSION = '1.0.0'
+DESCRIPTION = "Create correlation maps of two images with PyQT GUI"
+AUTHOR = "Andrei Zaneuski"
+AUTHOR_EMAIL = "zanevskiyandrey@gmail.com"
+URL = "https://github.com/Gliger13/correlation_map"
+LONG_DESCRIPTION = open(join(dirname(__file__), 'README.md')).read()
+
+# Required pac
+TESTS_ADDITIONAL_REQUIREMENTS = [
+    "pytest"
+]
+
 setup(
-    name='correlation_map',
-    version='0.1.0',
+    name=PROJECT_NAME,
+    version=PROJECT_VERSION,
+    description=DESCRIPTION,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    url=URL,
+    long_description=LONG_DESCRIPTION,
+    package_dir={"correlation_map": "correlation_map"},
     packages=find_packages(),
-    long_description=open(join(dirname(__file__), 'README.md')).read(),
+    install_requires=open(join(dirname(__file__), 'requirements.txt')).read(),
+    package_data={"correlation_map": ['gui/static/*']},
+    scripts=['correlation_map/app.py'],
+    tests_require=TESTS_ADDITIONAL_REQUIREMENTS,
 )

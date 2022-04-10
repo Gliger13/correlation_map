@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from gui.windows import region
+from correlation_map.gui.windows import region
 
 
 class DialogRegionSettings(QtWidgets.QDialog, region.Ui_Dialog):

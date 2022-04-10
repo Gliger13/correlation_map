@@ -1,11 +1,11 @@
 """Contains vertical layout wrapper for all image widgets"""
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from core.images.image import ImageTypes
-from core.images.image_container import ImageContainer
-from gui.core.main.image_chooser import ImageChooserComboBox
-from gui.core.main.image_widget import ImageWidget
-from gui.tools.logger import app_logger
+from correlation_map.core.images.image import ImageTypes
+from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.gui.core.main.image_chooser import ImageChooserComboBox
+from correlation_map.gui.core.main.image_widget import ImageWidget
+from correlation_map.gui.tools.logger import app_logger
 
 
 class ImageMainLayout(QVBoxLayout):
