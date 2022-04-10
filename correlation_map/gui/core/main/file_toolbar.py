@@ -1,12 +1,13 @@
-import cv2
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QFileDialog, QPushButton, QToolBar
+"""Contains file toolbar model for main window"""
+from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
 from core.images.image import Image, ImageTypes
 from core.images.image_container import ImageContainer
 
 
 class FileToolBar(QToolBar):
+    """File toolbar model for main window"""
+
     def __init__(self):
         super().__init__()
         self.__set_load_source_image_action()
@@ -30,21 +31,18 @@ class FileToolBar(QToolBar):
     def __set_load_source_image_action(self):
         load_source_image_action = QAction(self)
         load_source_image_action.setText("&LoadSourceImage")
-        load_source_image_action.setIcon(QIcon(":file-new.svg"))
         load_source_image_action.triggered.connect(self._load_source_image)
         self.addAction(load_source_image_action)
 
     def __set_load_destination_image_action(self):
         load_destination_image_action = QAction(self)
         load_destination_image_action.setText("&LoadDestinationImage")
-        load_destination_image_action.setIcon(QIcon(":file-new.svg"))
         load_destination_image_action.triggered.connect(self._load_source_image)
         self.addAction(load_destination_image_action)
 
     def __set_save_all_images_action(self):
         save_all_images_action = QAction(self)
         save_all_images_action.setText("&SaveImages")
-        save_all_images_action.setIcon(QIcon(":file-new.svg"))
         self.addAction(save_all_images_action)
 
     # def __set_actions(self):

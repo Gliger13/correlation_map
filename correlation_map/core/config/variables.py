@@ -32,3 +32,7 @@ class ProjectFileMapping:
     ROOT_DIR_NAME = "correlation_map"
     STATIC_FILES_DIR_NAME = "static"
     EXCLUDED_DIRS = {"venv", ".idea", "__pycache__"}
+
+    RUN_ICON_FILE_NAME = "run_icon.png"
+    STOP_ICON_FILE_NAME = "stop_icon.png"
+    TERMINATE_ICON_FILE_NAME = "terminate_icon.png"

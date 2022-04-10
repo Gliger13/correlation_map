@@ -87,8 +87,7 @@ class MainWindow(QMainWindow):
         image_chooser = QComboBox()
         image_layout.addWidget(image_chooser)
 
-        static_dir_path = ProjectPathFactory.get_dir_path_in_project_by_name(ProjectFileMapping.STATIC_FILES_DIR_NAME)
-        img = cv2.imread(os.path.join(static_dir_path, "cat.jpg"))
+        img = cv2.imread(ProjectPathFactory.get_static_file_path("cat.jpg"))
         image_widget = ImageWidget(img)
         image_layout.addWidget(image_widget)
         return image_widget
