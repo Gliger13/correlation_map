@@ -39,6 +39,3 @@ class Image:
 
     def show(self):
         cv2.imshow("Test image", self.image)
-
-
-

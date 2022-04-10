@@ -12,8 +12,6 @@ from gui.core.main.main_window import MainWindow
 from gui.tools.windows_config import WindowsConfig
 from gui.windows import main_window
 
-logging.basicConfig(level=logging.DEBUG)
-
 
 # class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 #     def __init__(self):
@@ -205,17 +203,17 @@ logging.basicConfig(level=logging.DEBUG)
 #         self.user.image2_path = image_path
 
 
-def main():
-    sys.excepthook = excepthook
-    app = QtWidgets.QApplication(sys.argv)
-    config = WindowsConfig(app)
-    window = MainWindow()
-    window.show()
-    app.exec_()
-
-
-def excepthook(exc_type, exc_value, exc_tb):
-    """For debug PyQT5 projects"""
-    tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
-    print("error catched!:", tb)
-    QtWidgets.QApplication.quit()
+# def main():
+#     sys.excepthook = excepthook
+#     app = QtWidgets.QApplication(sys.argv)
+#     config = WindowsConfig(app)
+#     window = MainWindow()
+#     window.show()
+#     app.exec_()
+#
+#
+# def excepthook(exc_type, exc_value, exc_tb):
+#     """For debug PyQT5 projects"""
+#     tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+#     print("error catched!:", tb)
+#     QtWidgets.QApplication.quit()
