@@ -33,6 +33,7 @@ class ProjectFileMapping:
     STATIC_FILES_DIR_NAME = "static"
     EXCLUDED_DIRS = {"venv", ".idea", "__pycache__"}
 
+    ADD_IMAGE_WINDOW_ICON_FILE_NAME = "add_image_window_icon.png"
     RUN_ICON_FILE_NAME = "run_icon.png"
     STOP_ICON_FILE_NAME = "stop_icon.png"
     TERMINATE_ICON_FILE_NAME = "terminate_icon.png"

@@ -1,5 +1,6 @@
 """Contains file toolbar model for main window"""
 
+from PIL import UnidentifiedImageError
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
 from correlation_map.core.images.image import Image, ImageTypes
@@ -26,6 +27,13 @@ class FileToolBar(QToolBar):
         """
         self.__active_image_layouts.append(image_layout)
 
+    def remove_image_layout(self, image_layout: ImageMainLayout):
+        """Remove image main layout
+
+        :param image_layout: image layout to remove
+        """
+        self.__active_image_layouts.remove(image_layout)
+
     @classmethod
     def _load_image(cls, image_type: ImageTypes):
         """Load image from file dialog
@@ -44,9 +52,14 @@ class FileToolBar(QToolBar):
         if not image_path:
             app_logger.debug("User didn't choose `%s`", image_type.value)
             return
-
         app_logger.info("User chosen `%s` image with path `%s`", image_type.value, image_path)
-        image = Image(image_path, image_type)
+
+        try:
+            image = Image(image_path, image_type)
+        except UnidentifiedImageError as error:
+            app_logger.error("Cannot load file by path %s. Error: %s", image_path, error)
+            return
+
         ImageContainer.add(image)
         cls._update_widgets(image)
 

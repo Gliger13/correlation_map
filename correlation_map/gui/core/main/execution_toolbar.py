@@ -1,4 +1,5 @@
 """Contains execution toolbar for the main window"""
+
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QToolBar
 
@@ -11,9 +12,19 @@ class ExecutionToolBar(QToolBar):
 
     def __init__(self):
         super().__init__()
-        self.__set_run_action()
-        self.__set_stop_action()
-        self.__set_terminate_action()
+        self.add_image_window_action = self.__set_add_image_window_action()
+        self.run_action = self.__set_run_action()
+        self.stop_action = self.__set_stop_action()
+        self.terminate_action = self.__set_terminate_action()
+
+    def __set_add_image_window_action(self):
+        """Configure and return run correlation process action"""
+        add_image_window_action = QAction(self)
+        add_image_window_action.setText("&Add image window")
+        icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.ADD_IMAGE_WINDOW_ICON_FILE_NAME))
+        add_image_window_action.setIcon(icon)
+        self.addAction(add_image_window_action)
+        return add_image_window_action
 
     def __set_run_action(self):
         """Configure and return run correlation process action"""
@@ -22,6 +33,7 @@ class ExecutionToolBar(QToolBar):
         run_icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.RUN_ICON_FILE_NAME))
         run_action.setIcon(run_icon)
         self.addAction(run_action)
+        return run_action
 
     def __set_stop_action(self):
         """Configure and return stop correlation process action"""
@@ -30,6 +42,7 @@ class ExecutionToolBar(QToolBar):
         stop_icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.STOP_ICON_FILE_NAME))
         stop_action.setIcon(stop_icon)
         self.addAction(stop_action)
+        return stop_action
 
     def __set_terminate_action(self):
         """Configure and return terminate correlation process action"""
@@ -38,3 +51,4 @@ class ExecutionToolBar(QToolBar):
         terminate_icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.TERMINATE_ICON_FILE_NAME))
         terminate_action.setIcon(terminate_icon)
         self.addAction(terminate_action)
+        return terminate_action

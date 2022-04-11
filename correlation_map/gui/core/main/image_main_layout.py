@@ -1,5 +1,7 @@
 """Contains vertical layout wrapper for all image widgets"""
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from correlation_map.core.images.image import ImageTypes
 from correlation_map.core.images.image_container import ImageContainer
@@ -16,16 +18,52 @@ class ImageMainLayout(QVBoxLayout):
         :param widget_to_attach: widget for attaching a layout
         """
         super().__init__(widget_to_attach)
+        self.first_horizontal_layout = self.__configure_first_horizontal_layout()
+        self.first_left_horizontal_layout = self.__configure_first_left_horizontal_layout()
+        self.first_right_horizontal_layout = self.__configure_first_right_horizontal_layout()
         self.image_chooser = self.__configure_image_chooser()
+        self.close_button_widget = QWidget()
+        self.close_button = self.__configure_close_button()
         self.image_widget = self.__configure_default_image_widget()
         self.image_chooser.activated.connect(self.set_image)
+
+    def __configure_first_horizontal_layout(self) -> QHBoxLayout:
+        """Configure and return first horizontal layout for image chooser text, image chooser and close button"""
+        first_horizontal_layout = QHBoxLayout()
+        self.addLayout(first_horizontal_layout)
+        return first_horizontal_layout
+
+    def __configure_first_left_horizontal_layout(self) -> QHBoxLayout:
+        """Configure and return left first horizontal layout for image chooser text, image chooser and close button"""
+        first_left_horizontal_layout = QHBoxLayout()
+        self.first_horizontal_layout.addLayout(first_left_horizontal_layout)
+        self.first_horizontal_layout.setStretchFactor(first_left_horizontal_layout, 1)
+        return first_left_horizontal_layout
+
+    def __configure_first_right_horizontal_layout(self) -> QHBoxLayout:
+        """Configure and return right first horizontal layout for image chooser text, image chooser and close button"""
+        first_right_horizontal_layout = QHBoxLayout()
+        first_right_horizontal_layout.setAlignment(Qt.AlignRight)
+        self.first_horizontal_layout.addLayout(first_right_horizontal_layout)
+        self.first_horizontal_layout.setStretchFactor(first_right_horizontal_layout, 1)
+        return first_right_horizontal_layout
 
     def __configure_image_chooser(self) -> ImageChooserComboBox:
         """Configure and return image chooser combo box"""
         image_chooser = ImageChooserComboBox()
-        self.addWidget(image_chooser)
+        text_label = QLabel()
+        text_label.setText("Displayed image: ")
+        self.first_left_horizontal_layout.addWidget(text_label)
+        self.first_left_horizontal_layout.addWidget(image_chooser, 1)
         app_logger.debug("Image chooser box configured")
         return image_chooser
+
+    def __configure_close_button(self) -> QWidget:
+        """Configure and return close button"""
+        close_button = QPushButton(self.close_button_widget)
+        close_button.setText("Close")
+        self.first_right_horizontal_layout.addWidget(close_button)
+        return close_button
 
     def __configure_default_image_widget(self) -> ImageWidget:
         """Configure and return image widget with default image"""
