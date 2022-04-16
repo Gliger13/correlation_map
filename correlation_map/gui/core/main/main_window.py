@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QWidget
 
 from correlation_map.core.config.variables import ProjectFileMapping
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_container import ImageContainer
 from correlation_map.gui.core.main.execution_toolbar import ExecutionToolBar
 from correlation_map.gui.core.main.file_toolbar import FileToolBar
@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
         """Add default image to image container"""
         app_logger.debug("Loading and adding default image to image container")
         path_to_default_image = ProjectPathFactory.get_static_file_path(ProjectFileMapping.DEFAULT_IMAGE_NAME)
-        default_image = Image(path_to_default_image, ImageTypes.DEFAULT_IMAGE)
+        default_image = ImageWrapper(path_to_default_image, ImageTypes.DEFAULT_IMAGE)
         ImageContainer.add(default_image)
         app_logger.debug("Default image added to image container")
 
@@ -99,6 +99,9 @@ class MainWindow(QMainWindow):
         """Configure and return image widget"""
         app_logger.debug("Configuring image main layout and it's widgets")
         image_main_layout = ImageMainLayout(self.main_widget)
+        image_main_layout.open_in_new_window_button.pressed.connect(image_main_layout.image_widget.image.show)
+        image_main_layout.move_to_new_window_button.pressed.connect(
+            lambda: (self.remove_layout(image_main_layout), image_main_layout.image_widget.image.show()))
         image_main_layout.close_button.pressed.connect(lambda: self.remove_layout(image_main_layout))
         self.main_layout.addLayout(image_main_layout)
         self.file_toolbar.add_image_layout(image_main_layout)

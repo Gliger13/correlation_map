@@ -2,7 +2,7 @@
 import logging
 from typing import Dict, Optional
 
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.tools.common import MetaSingleton
 from correlation_map.gui.tools.logger import app_logger
 
@@ -10,16 +10,16 @@ from correlation_map.gui.tools.logger import app_logger
 class ImageContainer(metaclass=MetaSingleton):
     """Singleton container to store all images"""
 
-    __images: Dict[ImageTypes, Image] = {}
+    __images: Dict[ImageTypes, ImageWrapper] = {}
 
     @classmethod
-    def add(cls, image: Image):
+    def add(cls, image: ImageWrapper):
         """Add the given image to images container"""
         cls.__images[image.image_type] = image
         app_logger.debug("New image with type `%s` registered in the image container", image.image_type.value)
 
     @classmethod
-    def get(cls, image_type: ImageTypes) -> Optional[Image]:
+    def get(cls, image_type: ImageTypes) -> Optional[ImageWrapper]:
         """Get image from container by given image type
 
         :param image_type: type of image to get

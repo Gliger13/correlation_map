@@ -5,12 +5,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from correlation_map.core.correlation.correlation_maker import CorrelationMaker, CorrelationTypes
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageWrapper, ImageTypes
 from correlation_map.core.images.image_builder import ImageBuilder
 
 
 class CorrelationMap:
-    def __init__(self, source_image: Image, destination_image: Image, correlation_type: str, delim: int = 10):
+    def __init__(self, source_image: ImageWrapper, destination_image: ImageWrapper,
+                 correlation_type: str, delim: int = 10):
         self.source_image = source_image
         self.destination_image = destination_image
         self.correlation_type = correlation_type

@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from correlation_map.core.correlation.correlation_maker import CorrelationCV2Types
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageTypes, ImageWrapper
 
 
 class ImageSelection:
@@ -26,7 +26,8 @@ class ImageSelection:
 
 class ImagesDescriber:
     @classmethod
-    def find_rotation_angle(cls, src_image: Image, dst_image: Image, descriptor_lines: int = 0) -> Tuple[float, Image]:
+    def find_rotation_angle(cls, src_image: ImageWrapper, dst_image: ImageWrapper,
+                            descriptor_lines: int = 0) -> Tuple[float, ImageWrapper]:
         """
         Return the angle of rotation of the img2 relative to img1
         """
@@ -45,7 +46,7 @@ class ImagesDescriber:
         output_image = 0
         output_image = cv2.drawMatches(src_image.image, kpt1, dst_image.image, kpt2, matches[:descriptor_lines],
                                        output_image, flags=2)
-        descriptor_image = Image.create_image(output_image, ImageTypes.DETECTED_IMAGE)
+        descriptor_image = ImageWrapper.create_image(output_image, ImageTypes.DETECTED_IMAGE)
         # Calculation angle
         src_pts = np.float32([kpt1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
         dst_pts = np.float32([kpt2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
@@ -55,7 +56,7 @@ class ImagesDescriber:
         return theta, descriptor_image
 
     @classmethod
-    def find_image_points(cls, source_image: Image, destination_image: Image,
+    def find_image_points(cls, source_image: ImageWrapper, destination_image: ImageWrapper,
                           type_of_correlation: str) -> ImageSelection:
         res = cv2.matchTemplate(source_image.image, destination_image.image,
                                 CorrelationCV2Types[type_of_correlation].value)

@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from correlation_map.core.images.image import Image
+from correlation_map.core.images.image import ImageWrapper
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -19,7 +19,7 @@ class MplCanvas(FigureCanvasQTAgg):
 class ImageWidget(QWidget):
     """Image widget wrapper for displaying an image as plot and plot tools"""
 
-    def __init__(self, image: Image):
+    def __init__(self, image: ImageWrapper):
         """
         :param image: image wrapper to attach to widget
         """

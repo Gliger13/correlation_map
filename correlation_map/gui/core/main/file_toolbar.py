@@ -3,7 +3,7 @@
 from PIL import UnidentifiedImageError
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_container import ImageContainer
 from correlation_map.gui.core.main.image_main_layout import ImageMainLayout
 from correlation_map.gui.tools.logger import app_logger
@@ -55,7 +55,7 @@ class FileToolBar(QToolBar):
         app_logger.info("User chosen `%s` image with path `%s`", image_type.value, image_path)
 
         try:
-            image = Image(image_path, image_type)
+            image = ImageWrapper(image_path, image_type)
         except UnidentifiedImageError as error:
             app_logger.error("Cannot load file by path %s. Error: %s", image_path, error)
             return
@@ -64,7 +64,7 @@ class FileToolBar(QToolBar):
         cls._update_widgets(image)
 
     @classmethod
-    def _update_widgets(cls, new_image: Image):
+    def _update_widgets(cls, new_image: ImageWrapper):
         """Update all main image widgets and image choosers
 
         :param new_image: new loaded image wrapper

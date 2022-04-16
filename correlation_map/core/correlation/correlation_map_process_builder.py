@@ -1,5 +1,5 @@
 from correlation_map.core.correlation.correlation_map import CorrelationMap
-from correlation_map.core.images.image import Image, ImageTypes
+from correlation_map.core.images.image import ImageWrapper, ImageTypes
 from correlation_map.core.images.image_builder import ImageBuilder
 from correlation_map.core.images.image_container import ImageContainer
 from correlation_map.core.images.images_describer import ImagesDescriber
@@ -15,11 +15,11 @@ class CorrelationMapProcessBuilder:
         self.current_dst_image = None
 
     def _load_user_images(self):
-        source_image = Image(self.user.image1_path, ImageTypes.SOURCE_IMAGE)
+        source_image = ImageWrapper(self.user.image1_path, ImageTypes.SOURCE_IMAGE)
         self.images_container.add(source_image)
         self.current_src_image = source_image
 
-        destination_image = Image(self.user.image2_path, ImageTypes.DESTINATION_IMAGE)
+        destination_image = ImageWrapper(self.user.image2_path, ImageTypes.DESTINATION_IMAGE)
         self.images_container.add(destination_image)
         self.current_dst_image = destination_image
 
