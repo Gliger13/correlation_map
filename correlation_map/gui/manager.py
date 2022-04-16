@@ -4,7 +4,7 @@ from traceback import format_exception
 
 from PyQt5 import QtWidgets
 
-from correlation_map.gui.core.main.main_window import MainWindow
+from correlation_map.gui.core.main_window import MainWindow
 from correlation_map.gui.tools.logger import app_logger
 
 

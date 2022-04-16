@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
 from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_container import ImageContainer
-from correlation_map.gui.core.main.image_main_layout import ImageMainLayout
-from correlation_map.gui.core.main.save_images_dialog import SaveImagesDialog
+from correlation_map.gui.core.image_main_layout import ImageMainLayout
+from correlation_map.gui.core.save_images_dialog import SaveImagesDialog
 from correlation_map.gui.tools.logger import app_logger
 
 
