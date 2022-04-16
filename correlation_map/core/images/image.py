@@ -1,12 +1,11 @@
 """Contains all available image types and image wrapper model"""
+import os
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
-
+from filetype import guess
 from matplotlib import pyplot as plt
 from numpy import ndarray
-
-from PIL.Image import fromarray, Image
 
 from correlation_map.gui.tools.logger import app_logger
 
@@ -51,28 +50,33 @@ class ImageWrapper:
         self.image_type = image_type
         if self.image_type not in ImageTypes:
             raise TypeError(f"Image type `{self.image_type}` not supported")
-        self.image: Optional[Image] = plt.imread(self.path) if self.path else None
+        self._image_format = guess(self.path).extension if self.path else "png"
+        self.image: Optional[ndarray] = plt.imread(self.path) if self.path else None
 
     def save(self, path: str):
-        """Save image by the given path"""
+        """Save the image in the specified directory path
+
+        :param path: path to the directory to save
+        """
+        app_logger.debug("Saving image with type %s by path %s", self.image_type.value, path)
         if self.image is None:
             app_logger.warning("Can not save image with type %s, it's empty", self.image_type.value)
             return
-        self.image.save(path)
+
+        new_image_path = os.path.join(path, f"{self.image_type.value.replace(' ', '_')}.{self._image_format}")
+        plt.imsave(new_image_path, self.image)
+        app_logger.info("Image with type %s saved in path %s", self.image_type.value, path)
 
     @classmethod
-    def create_image(cls, image: Union[Image, ndarray], image_type: ImageTypes = None) -> 'ImageWrapper':
-        """Create new image by the given arrays
+    def create_image(cls, image: ndarray, image_type: ImageTypes = None) -> 'ImageWrapper':
+        """Create a new image by the given arrays
 
         :param image: arrays of the image to create
         :param image_type: type of the new image
         :return: created image wrapper with the given array and type
         """
         new_image = ImageWrapper(image_type=image_type)
-        image_to_set = image
-        if isinstance(image, ndarray):
-            image_to_set = fromarray(image)
-        new_image.image = image_to_set
+        new_image.image = image
         return new_image
 
     @property
@@ -84,7 +88,7 @@ class ImageWrapper:
         if self.image is None:
             app_logger.warning("Can not get image shapes with type %s, it's empty", self.image_type.value)
             return 0, 0, 0
-        return self.image.width, self.image.height, 0
+        return self.image.shape
 
     def show(self):
         """Show current image as matplotlib figure"""

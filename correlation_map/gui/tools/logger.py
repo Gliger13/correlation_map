@@ -15,6 +15,11 @@ class ApplicationLogger(logging.Logger):
         super().__init__(name)
         self.__set_handlers()
 
+    @classmethod
+    def get_logging_console_formatter(cls) -> logging.Formatter:
+        """Return console logging formatter"""
+        return logging.Formatter("{asctime:^8} | {levelname:^8} | {module}: {message}", "%H:%M:%S", style="{")
+
     def __set_handlers(self):
         """Set logger handlers and format"""
         if os.getenv(EnvironmentVariables.APPLICATION_MODE) == EnvironmentVariables.APPLICATION_DEBUG_MODE:
@@ -34,10 +39,17 @@ class ApplicationLogger(logging.Logger):
             console_handler.setLevel(logging.DEBUG)
         else:
             console_handler.setLevel(logging.INFO)
-        console_format = logging.Formatter(
-            "{asctime:^8} | {levelname:^8} | {module}: {message}", "%H:%M:%S", style="{")
-        console_handler.setFormatter(console_format)
+        console_handler.setFormatter(cls.get_logging_console_formatter())
         return console_handler
 
 
+class ToolsLogger(ApplicationLogger):
+    """Custom logger realisation with more informal logger"""
+
+    @classmethod
+    def get_logging_console_formatter(cls) -> logging.Formatter:
+        return logging.Formatter("{asctime:^8} | {levelname:^8} | {message}", "%H:%M:%S", style="{")
+
+
 app_logger = ApplicationLogger("app")
+tools_logger = ToolsLogger("tools")

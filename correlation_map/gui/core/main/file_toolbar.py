@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_container import ImageContainer
 from correlation_map.gui.core.main.image_main_layout import ImageMainLayout
+from correlation_map.gui.core.main.save_images_dialog import SaveImagesDialog
 from correlation_map.gui.tools.logger import app_logger
 
 
@@ -33,6 +34,24 @@ class FileToolBar(QToolBar):
         :param image_layout: image layout to remove
         """
         self.__active_image_layouts.remove(image_layout)
+
+    @staticmethod
+    def save_images():
+        """Save all user chosen images in the user chosen directory path"""
+        save_images_dialog = SaveImagesDialog()
+        app_logger.info("User in the save images dialog. Waiting for the actions")
+        user_choice = save_images_dialog.exec()
+        if not user_choice:
+            app_logger.debug("User doesn't want to save images. Exit dialog")
+            return
+
+        app_logger.info("User chosen to save `%s` images",
+                        {image_type.value for image_type in save_images_dialog.get_images_to_save()})
+        for image_type_to_save in save_images_dialog.get_images_to_save():
+            for image in ImageContainer.get_all_user_images():
+                if image.image_type == image_type_to_save:
+                    image.save(save_images_dialog.images_path_to_save)
+        app_logger.info("All selected images saved")
 
     @classmethod
     def _load_image(cls, image_type: ImageTypes):
@@ -94,5 +113,6 @@ class FileToolBar(QToolBar):
         """Set action on file toolbar to save images"""
         save_all_images_action = QAction(self)
         save_all_images_action.setText("&Save images")
+        save_all_images_action.triggered.connect(self.save_images)
         self.addAction(save_all_images_action)
         app_logger.debug("Save all images action connected")
