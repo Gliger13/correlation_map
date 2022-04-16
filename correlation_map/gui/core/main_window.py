@@ -36,7 +36,8 @@ class MainWindow(QMainWindow):
         - windows size = full screen
         """
         self.setWindowState(Qt.WindowMaximized)
-        app_logger.debug("Main windows maximized")
+        app_logger.debug("Main window maximized")
+        self.setWindowTitle("Correlation map builder")
 
     def __set_menu_bar(self) -> MainMenu:
         """Configure menu bar for main window and return it
