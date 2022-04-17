@@ -43,6 +43,11 @@ class ImageContainer(metaclass=MetaSingleton):
         return any(image for image in cls.__images.values() if image.image_type != ImageTypes.DEFAULT_IMAGE)
 
     @classmethod
+    def is_contain_specific_image(cls, image_type: ImageTypes) -> bool:
+        """Returns True if the image container contains the image with the given type else False"""
+        return image_type in cls.__images
+
+    @classmethod
     def get_loaded_image_types(cls) -> list[str]:
         """Get all image types in the container
 
