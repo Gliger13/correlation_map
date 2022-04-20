@@ -3,20 +3,24 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMessageBox, QToolBar
 
-from correlation_map.core.config.correlation import PreprocessorActions
+from correlation_map.core.config.correlation import CorrelationConfiguration
 from correlation_map.core.config.variables import ProjectFileMapping
 from correlation_map.core.images.image import ImageTypes
 from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.gui.core.correlation_processes_dialogs.correlation_building_dialog import CorrelationBuildingDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_start_settings_dialog import \
     CorrelationStartSettingsDialog
 from correlation_map.gui.core.correlation_processes_dialogs.important_part_chooser_dialog import \
     ImageImportantPartChooserDialog
+from correlation_map.gui.core.image_main_layout import ImageMainLayout
 from correlation_map.gui.tools.logger import app_logger
 from correlation_map.gui.tools.path_factory import ProjectPathFactory
 
 
 class ExecutionToolBar(QToolBar):
     """Execution toolbar for the main window"""
+
+    __active_image_layouts: list[ImageMainLayout] = []
 
     def __init__(self):
         super().__init__()
@@ -57,28 +61,52 @@ class ExecutionToolBar(QToolBar):
 
         1) Allow user to select correlation configurations
         2) Allow user to choose image important part if he wants
+        3) Start correlation map building
         """
         app_logger.info("User configuring correlation configuration")
         if not self.check_for_loaded_source_and_destination_images():
             app_logger.info("User didn't load all needed images to build correlation map")
             return None
 
+        correlation_configuration = CorrelationConfiguration()
         correlation_start_dialog = CorrelationStartSettingsDialog()
         correlation_settings_dialog_exit_code = correlation_start_dialog.exec()
         if not correlation_settings_dialog_exit_code:
             app_logger.info("User canceled correlation configuration dialog")
             return None
 
-        if correlation_start_dialog.preprocessor_checks_map[PreprocessorActions.CHOSE_IMPORTANT_PART].isChecked():
+        correlation_start_dialog.update_correlation_configuration(correlation_configuration)
+
+        if correlation_configuration.chose_important_part:
             app_logger.info("User choosing image important part")
             image_important_part_chooser_dialog = ImageImportantPartChooserDialog()
             part_chooser_dialog_exit_code = image_important_part_chooser_dialog.exec()
             if not part_chooser_dialog_exit_code:
                 app_logger.info("User does not want to continue while choosing image important part")
                 return None
+            image_important_part_chooser_dialog.update_correlation_configuration(correlation_configuration)
         else:
             app_logger.info("User does not want to choose important image part for correlation")
+        app_logger.info("Waiting for user to click start correlation building process button")
+        building_dialog = CorrelationBuildingDialog(correlation_configuration)
+        building_dialog.exec()
+        for image_layout in self.__active_image_layouts:
+            image_layout.image_chooser.update_items()
         return None
+
+    def add_image_layout(self, image_layout: ImageMainLayout):
+        """Add image layout for support and maintain if there is a new image
+
+        :param image_layout: image layout to maintain
+        """
+        self.__active_image_layouts.append(image_layout)
+
+    def remove_image_layout(self, image_layout: ImageMainLayout):
+        """Remove image main layout
+
+        :param image_layout: image layout to remove
+        """
+        self.__active_image_layouts.remove(image_layout)
 
     def __set_add_image_window_action(self):
         """Configure and return run correlation process action"""

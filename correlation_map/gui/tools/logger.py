@@ -48,6 +48,7 @@ class ToolsLogger(ApplicationLogger):
 
     @classmethod
     def get_logging_console_formatter(cls) -> logging.Formatter:
+        """Return console logging formatter without module name"""
         return logging.Formatter("{asctime:^8} | {levelname:^8} | {message}", "%H:%M:%S", style="{")
 
 

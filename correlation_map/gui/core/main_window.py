@@ -106,6 +106,7 @@ class MainWindow(QMainWindow):
         image_main_layout.close_button.pressed.connect(lambda: self.remove_layout(image_main_layout))
         self.main_layout.addLayout(image_main_layout)
         self.file_toolbar.add_image_layout(image_main_layout)
+        self.execution_tool_bar.add_image_layout(image_main_layout)
         app_logger.debug("Image main layout and it's widgets configured")
         return image_main_layout
 
@@ -113,5 +114,6 @@ class MainWindow(QMainWindow):
         """Remove given main image layout"""
         app_logger.info("Closing image main layout")
         self.file_toolbar.remove_image_layout(layout)
+        self.execution_tool_bar.remove_image_layout(layout)
         delete_layout(layout)
         app_logger.info("Image main layout removed")

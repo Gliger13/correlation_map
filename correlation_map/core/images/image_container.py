@@ -1,7 +1,8 @@
 """Module contains image container singleton to store all images"""
 import logging
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator, Optional, Union
 
+from correlation_map.core.correlation.correlation_map import CorrelationMap
 from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.tools.common import MetaSingleton
 from correlation_map.gui.tools.logger import app_logger
@@ -10,7 +11,7 @@ from correlation_map.gui.tools.logger import app_logger
 class ImageContainer(metaclass=MetaSingleton):
     """Singleton container to store all images"""
 
-    __images: Dict[ImageTypes, ImageWrapper] = {}
+    __images: Dict[ImageTypes, Union[ImageWrapper, CorrelationMap]] = {}
 
     @classmethod
     def add(cls, image: ImageWrapper):

@@ -1,3 +1,4 @@
+"""Contains correlation map model"""
 import logging
 import math
 
@@ -5,23 +6,29 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from correlation_map.core.correlation.correlation_maker import CorrelationMaker, CorrelationTypes
-from correlation_map.core.images.image import ImageWrapper, ImageTypes
+from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_builder import ImageBuilder
+from correlation_map.gui.tools.logger import app_logger
 
 
 class CorrelationMap:
+    """Correlation map model, 3d model witch shows correlation between source and destination image"""
+
+    image_type = ImageTypes.CORRELATION_MAP
+
     def __init__(self, source_image: ImageWrapper, destination_image: ImageWrapper,
-                 correlation_type: str, delim: int = 10):
+                 correlation_type: CorrelationTypes, delim: int = 10):
         self.source_image = source_image
         self.destination_image = destination_image
         self.correlation_type = correlation_type
+
         self.delim = delim
         self.correlation_map = None
 
     @staticmethod
     def __make_equals(c1, c2):
-        h1, w1 = c1.shape
-        h2, w2 = c2.shape
+        h1, w1, *_ = c1.shape
+        h2, w2, *_ = c2.shape
         if h1 < h2:
             c2 = c2[:h1]
         else:
@@ -61,20 +68,21 @@ class CorrelationMap:
         current_cell = 1
         for i, row in enumerate(self.correlation_map):
             for j, _ in enumerate(row):
-                logging.debug(f'Calc {current_cell}/{cells_left}')
+                app_logger.debug('Calculated %s/%s cells', current_cell, cells_left)
                 cell1 = cells_1.pop(0)
                 cell2 = cells_2.pop(0)
                 if cell1.shape != cell2.shape:
                     cell1, cell2 = self.__make_equals(cell1, cell2)
 
-                correlation_function_name = CorrelationTypes[self.correlation_type].value
-                cell_correlation = CorrelationMaker().__getattribute__(correlation_function_name)(cell1, cell2)
+                cell_correlation = CorrelationMaker().__getattribute__(
+                    self.correlation_type.correlation_type)(cell1, cell2)
                 self.correlation_map[i, j] = cell_correlation
                 current_cell += 1
 
         return self
 
     def view_correlation_map(self):
+        """View current correlation map as 3d matplotlib window"""
         x_array = []
         y_array = []
         z_array = []
@@ -87,4 +95,3 @@ class CorrelationMap:
         ax.plot_trisurf(x_array, y_array, z_array, linewidth=0.1, antialiased=True, cmap='magma')
         ax.set_title('Correlation map')
         plt.show()
-        return x_array, y_array, z_array

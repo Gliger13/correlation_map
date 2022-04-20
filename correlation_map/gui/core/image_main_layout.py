@@ -4,8 +4,10 @@ import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
+from correlation_map.core.correlation.correlation_map import CorrelationMap
 from correlation_map.core.images.image import ImageTypes, ImageWrapper
 from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.gui.core.correlation_map_widget import CorrelationMapWidget
 from correlation_map.gui.core.image_chooser import ImageChooserComboBox
 from correlation_map.gui.core.image_widget import ImageWidget
 from correlation_map.gui.tools.logger import app_logger
@@ -59,10 +61,13 @@ class ImageMainLayout(QVBoxLayout):
             app_logger.error("Can't get and set chosen image with type %s by image chooser from the image container",
                              chosen_image_type.value)
             return None
-        new_image_widget = ImageWidget(image)
         self.removeWidget(self.image_widget)
-        self.addWidget(new_image_widget)
-        self.image_widget = new_image_widget
+        if isinstance(image, CorrelationMap):
+            widget_to_set = CorrelationMapWidget(image)
+        else:
+            widget_to_set = ImageWidget(image)
+        self.addWidget(widget_to_set)
+        self.image_widget = widget_to_set
         app_logger.info("Image with type `%s` was set", chosen_image_type.value)
         return None
 

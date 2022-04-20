@@ -36,9 +36,19 @@ class ImageSelectedRegion:
         return abs(self.x_2 - self.x_1)
 
     @property
-    def left_bottom_point(self) -> Tuple[int, int]:
+    def bottom_left_point(self) -> Tuple[int, int]:
         """Return left bottom coordinates of the selected region"""
         return min(self.x_1, self.x_2), min(self.y_1, self.y_2)
+
+    @property
+    def bottom_right_point(self) -> Tuple[int, int]:
+        """Return right bottom coordinates of the selected region"""
+        return max(self.x_1, self.x_2), min(self.y_1, self.y_2)
+
+    @property
+    def top_left_point(self) -> Tuple[int, int]:
+        """Return left top coordinates of the selected region"""
+        return min(self.x_1, self.x_2), max(self.y_1, self.y_2)
 
     @property
     def attributes_dict(self) -> Dict[str, int]:
@@ -119,7 +129,7 @@ class ImageWidgetWithSelector(ImageWidget):
         """Draw rectangle in the current selected region and remove old one"""
         if self._last_drawn_rectangle:
             self._last_drawn_rectangle.remove()
-        rectangle_to_draw = Rectangle(self.selected_region.left_bottom_point, self.selected_region.width,
+        rectangle_to_draw = Rectangle(self.selected_region.bottom_left_point, self.selected_region.width,
                                       self.selected_region.height, linewidth=1, edgecolor='r', facecolor='none')
         self.canvas.axes.add_patch(rectangle_to_draw)
         self._last_drawn_rectangle = rectangle_to_draw

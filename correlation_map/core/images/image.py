@@ -3,6 +3,7 @@ import os
 from enum import Enum
 from typing import Optional, Tuple
 
+import cv2
 from filetype import guess
 from matplotlib import pyplot as plt
 from numpy import ndarray
@@ -16,7 +17,7 @@ class ImageTypes(Enum):
     DEFAULT_IMAGE = "default image"
     SOURCE_IMAGE = "source image"
     DESTINATION_IMAGE = "destination image"
-    SCALED_IMAGE = "scaled image"
+    CROPPED_IMAGE = "cropped image"
     DETECTED_IMAGE = "detected image"
     ROTATED_IMAGE = "rotated image"
     FOUND_IMAGE = "found image"
@@ -48,10 +49,8 @@ class ImageWrapper:
         """
         self.path = path
         self.image_type = image_type
-        if self.image_type not in ImageTypes:
-            raise TypeError(f"Image type `{self.image_type}` not supported")
         self._image_format = guess(self.path).extension if self.path else "png"
-        self.image: Optional[ndarray] = plt.imread(self.path) if self.path else None
+        self.image: Optional[ndarray] = cv2.cvtColor(cv2.imread(self.path), cv2.COLOR_BGR2RGB) if self.path else None
 
     def save(self, path: str):
         """Save the image in the specified directory path
@@ -64,11 +63,11 @@ class ImageWrapper:
             return
 
         new_image_path = os.path.join(path, f"{self.image_type.value.replace(' ', '_')}.{self._image_format}")
-        plt.imsave(new_image_path, self.image)
+        cv2.imwrite(new_image_path, self.image)
         app_logger.info("Image with type %s saved in path %s", self.image_type.value, path)
 
     @classmethod
-    def create_image(cls, image: ndarray, image_type: ImageTypes = None) -> 'ImageWrapper':
+    def create_image(cls, image: ndarray, image_type: Optional[ImageTypes] = None) -> 'ImageWrapper':
         """Create a new image by the given arrays
 
         :param image: arrays of the image to create
