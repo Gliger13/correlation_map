@@ -61,13 +61,13 @@ class ImagesDescriber:
     @classmethod
     def find_image_points(cls, source_image: ImageWrapper, destination_image: ImageWrapper,
                           type_of_correlation: CorrelationTypes) -> ImageSelection:
-        res = cv2.matchTemplate(source_image.image, destination_image.image, type_of_correlation.correlation_cv2_type)
+        res = cv2.matchTemplate(destination_image.image, source_image.image, type_of_correlation.correlation_cv2_type)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         h, w, _ = destination_image.image.shape
 
         # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
         image_selection = ImageSelection()
-        if type_of_correlation.correlation_cv2_type in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+        if type_of_correlation in [CorrelationTypes.TM_SQDIFF, CorrelationTypes.TM_SQDIFF_NORMED]:
             image_selection.x1, image_selection.y1 = min_loc
         else:
             image_selection.x1, image_selection.y1 = max_loc

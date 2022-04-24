@@ -113,7 +113,7 @@ class ImageWidgetWithSelector(ImageWidget):
         :param image: image wrapper to attach to widget
         """
         super().__init__(image)
-        x_max_value, y_max_value, _ = self.image.shape
+        y_max_value, x_max_value, _ = self.image.shape
         self.selected_region = ImageSelectedRegion(x_1=0, y_1=0, x_2=x_max_value, y_2=y_max_value)
         self._selected_region_layout = self._configure_selected_region_layout()
         self.selected_region_spin_boxes = self._configure_selected_region_spin_boxes()
@@ -171,7 +171,8 @@ class ImageWidgetWithSelector(ImageWidget):
     def _configure_selected_region_spin_boxes(self) -> Tuple[QSpinBox, ...]:
         """Configure and return spin boxes for selected region coordinates"""
         widget_grid_places = (0, 0), (0, 1), (1, 0), (1, 1)
-        max_values = (self.image.shape[0], self.image.shape[1], self.image.shape[0], self.image.shape[1])
+        y_max_value, x_max_value, _ = self.image.shape
+        max_values = x_max_value, y_max_value, x_max_value, y_max_value
 
         configured_widgets: list[tuple[QLabel, QSpinBox]] = []
         for attribute, max_value, place in zip(self.selected_region.items, max_values, widget_grid_places):
