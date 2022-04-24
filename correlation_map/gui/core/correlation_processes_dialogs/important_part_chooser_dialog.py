@@ -2,9 +2,9 @@
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout
 
 from correlation_map.core.config.correlation import CorrelationConfiguration
-from correlation_map.core.images.image import ImageTypes
-from correlation_map.core.images.image_container import ImageContainer
-from correlation_map.gui.core.image_widget import ImageWidgetWithSelector
+from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.models.figures.figure_container import FigureContainer
+from correlation_map.gui.core.figure_widgets.image_with_selector_widget import ImageWithSelectorWidget
 from correlation_map.gui.tools.common import log_configuration_process
 
 
@@ -41,8 +41,8 @@ class ImageImportantPartChooserDialog(QDialog):
         return main_layout
 
     @log_configuration_process
-    def __configure_image_widget(self) -> ImageWidgetWithSelector:
-        image_widget = ImageWidgetWithSelector(ImageContainer.get(ImageTypes.SOURCE_IMAGE))
+    def __configure_image_widget(self) -> ImageWithSelectorWidget:
+        image_widget = ImageWithSelectorWidget(FigureContainer.get(FigureType.SOURCE_IMAGE))
         self._main_layout.addWidget(image_widget)
         return image_widget
 

@@ -1,7 +1,7 @@
 """Module contains image chooser combo box model"""
 from PyQt5.QtWidgets import QComboBox
 
-from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.models.figures.figure_container import FigureContainer
 
 
 class ImageChooserComboBox(QComboBox):
@@ -18,5 +18,5 @@ class ImageChooserComboBox(QComboBox):
         """
         current_choice = self.currentText()
         self.clear()
-        self.addItems(sorted([image_type.capitalize() for image_type in ImageContainer.get_loaded_image_types()]))
+        self.addItems(sorted([image_type.capitalize() for image_type in FigureContainer.get_all_figure_types()]))
         self.setCurrentText(current_choice)

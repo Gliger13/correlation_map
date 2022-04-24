@@ -4,9 +4,9 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMessageBox, QToolBar
 
 from correlation_map.core.config.correlation import CorrelationConfiguration
+from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
-from correlation_map.core.images.image import ImageTypes
-from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.models.figures.figure_container import FigureContainer
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_building_dialog import CorrelationBuildingDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_start_settings_dialog import \
     CorrelationStartSettingsDialog
@@ -34,13 +34,13 @@ class ExecutionToolBar(QToolBar):
 
         Check of user loaded source and destination images. If it's false, then call dialog with information.
         """
-        if ImageContainer.is_contain_specific_image(ImageTypes.SOURCE_IMAGE) and \
-                ImageContainer.is_contain_specific_image(ImageTypes.DESTINATION_IMAGE):
+        if FigureContainer.is_contain_specific_image(FigureType.SOURCE_IMAGE) and \
+                FigureContainer.is_contain_specific_image(FigureType.DESTINATION_IMAGE):
             return True
-        if not ImageContainer.is_contain_specific_image(ImageTypes.SOURCE_IMAGE):
+        if not FigureContainer.is_contain_specific_image(FigureType.SOURCE_IMAGE):
             dialog_message = "Not all images for correlation loaded. Please load source and destination images to " \
                              "build correlation map"
-        elif not ImageContainer.is_contain_specific_image(ImageTypes.DESTINATION_IMAGE):
+        elif not FigureContainer.is_contain_specific_image(FigureType.DESTINATION_IMAGE):
             dialog_message = "Not all images for correlation loaded. Please load destination image to build " \
                              "correlation map"
         else:

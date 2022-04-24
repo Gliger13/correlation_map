@@ -2,9 +2,10 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QWidget
 
+from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
-from correlation_map.core.images.image import ImageTypes, ImageWrapper
-from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.models.figures.image import ImageWrapper
+from correlation_map.core.models.figures.figure_container import FigureContainer
 from correlation_map.gui.core.execution_toolbar import ExecutionToolBar
 from correlation_map.gui.core.file_toolbar import FileToolBar
 from correlation_map.gui.core.image_main_layout import ImageMainLayout
@@ -92,17 +93,18 @@ class MainWindow(QMainWindow):
         """Add default image to image container"""
         app_logger.debug("Loading and adding default image to image container")
         path_to_default_image = ProjectPathFactory.get_static_file_path(ProjectFileMapping.DEFAULT_IMAGE_NAME)
-        default_image = ImageWrapper(path_to_default_image, ImageTypes.DEFAULT_IMAGE)
-        ImageContainer.add(default_image)
+        default_image = ImageWrapper(path_to_default_image, FigureType.DEFAULT_IMAGE)
+        FigureContainer.add(default_image)
         app_logger.debug("Default image added to image container")
 
     def set_image_main_layout(self) -> ImageMainLayout:
         """Configure and return image widget"""
         app_logger.debug("Configuring image main layout and it's widgets")
         image_main_layout = ImageMainLayout(self.main_widget)
-        image_main_layout.open_in_new_window_button.pressed.connect(image_main_layout.image_widget.image.show)
+        image_main_layout.open_in_new_window_button.pressed.connect(
+            lambda: image_main_layout.image_widget.figure.show())
         image_main_layout.move_to_new_window_button.pressed.connect(
-            lambda: (self.remove_layout(image_main_layout), image_main_layout.image_widget.image.show()))
+            lambda: (self.remove_layout(image_main_layout), image_main_layout.image_widget.figure.show()))
         image_main_layout.close_button.pressed.connect(lambda: self.remove_layout(image_main_layout))
         self.main_layout.addLayout(image_main_layout)
         self.file_toolbar.add_image_layout(image_main_layout)

@@ -1,112 +1,24 @@
-"""Contains image widget class"""
-from dataclasses import dataclass
-from typing import Dict, Generator, Optional, Tuple
+"""Image with selector widget
+
+Image widget wrapper to allow user to select image region to crop.
+"""
+from typing import Optional, Tuple
 
 from matplotlib import pyplot as plt
 from matplotlib.backend_bases import MouseEvent
-from matplotlib.backends.backend_qt import NavigationToolbar2QT
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
 from matplotlib.widgets import RectangleSelector
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QSpinBox, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QSpinBox, QWidget
 
-from correlation_map.core.images.image import ImageWrapper
+from correlation_map.core.models.figures.image import ImageWrapper
+from correlation_map.core.models.image_selected_region import ImageSelectedRegion
+from correlation_map.gui.core.figure_widgets.image_widget import ImageWidget
 from correlation_map.gui.tools.common import log_configuration_process
 from correlation_map.gui.tools.logger import app_logger
 
 
-@dataclass
-class ImageSelectedRegion:
-    """Dataclass for image selection region"""
-    x_1: int
-    y_1: int
-    x_2: int
-    y_2: int
-
-    @property
-    def height(self) -> int:
-        """Return selected region height"""
-        return abs(self.y_2 - self.y_1)
-
-    @property
-    def width(self) -> int:
-        """Return selected region width"""
-        return abs(self.x_2 - self.x_1)
-
-    @property
-    def bottom_left_point(self) -> Tuple[int, int]:
-        """Return left bottom coordinates of the selected region"""
-        return min(self.x_1, self.x_2), min(self.y_1, self.y_2)
-
-    @property
-    def bottom_right_point(self) -> Tuple[int, int]:
-        """Return right bottom coordinates of the selected region"""
-        return max(self.x_1, self.x_2), min(self.y_1, self.y_2)
-
-    @property
-    def top_left_point(self) -> Tuple[int, int]:
-        """Return left top coordinates of the selected region"""
-        return min(self.x_1, self.x_2), max(self.y_1, self.y_2)
-
-    @property
-    def attributes_dict(self) -> Dict[str, int]:
-        """Return dict of rectangle coordinates"""
-        return {"x_1": self.x_1, "y_1": self.y_1, "x_2": self.x_2, "y_2": self.y_2}
-
-    @property
-    def items(self) -> Generator[Tuple[str, int], None, None]:
-        """Return generator that returns items of selected rectangle coordinates"""
-        for item in self.attributes_dict.items():
-            yield item
-
-
-class MplCanvas(FigureCanvasQTAgg):
-    """Figure canvas class inheritance to display image as plot"""
-
-    def __init__(self, width: int = 5, height: int = 4, dpi: int = 100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-        super().__init__(fig)
-
-
-class ImageWidget(QWidget):
-    """Image widget wrapper for displaying an image as plot and plot tools"""
-
-    def __init__(self, image: ImageWrapper):
-        """
-        :param image: image wrapper to attach to widget
-        """
-        super().__init__()
-        self.image = image
-        self.canvas = MplCanvas(width=5, height=4, dpi=100)
-        self.main_layout = self.__configure_main_layout()
-        self.tool_bar = self.__configure_navigation_toolbar()
-        self._set_image()
-
-    @log_configuration_process
-    def __configure_main_layout(self) -> QVBoxLayout:
-        """Configure and return vertical layout"""
-        main_layout = QVBoxLayout()
-        self.setLayout(main_layout)
-        return main_layout
-
-    @log_configuration_process
-    def __configure_navigation_toolbar(self) -> NavigationToolbar2QT:
-        """Configure and return image navigation toolbar"""
-        toolbar = NavigationToolbar2QT(self.canvas, self)
-        self.main_layout.addWidget(toolbar)
-        return toolbar
-
-    def _set_image(self):
-        """Set and display current image as plot"""
-        self.canvas.axes.imshow(self.image.image)
-        self.canvas.axes.set_title(self.image.image_type.value.capitalize())
-        self.main_layout.addWidget(self.canvas)
-
-
-class ImageWidgetWithSelector(ImageWidget):
+class ImageWithSelectorWidget(ImageWidget):
     """Wrapper for image widget with rectangle selector on image graph"""
 
     def __init__(self, image: ImageWrapper):
@@ -114,12 +26,17 @@ class ImageWidgetWithSelector(ImageWidget):
         :param image: image wrapper to attach to widget
         """
         super().__init__(image)
-        y_max_value, x_max_value, _ = self.image.shape
-        self.selected_region = ImageSelectedRegion(x_1=0, y_1=0, x_2=x_max_value, y_2=y_max_value)
+
+        self.selected_region = self._get_default_image_selected_region()
         self._selected_region_layout = self._configure_selected_region_layout()
         self.selected_region_spin_boxes = self._configure_selected_region_spin_boxes()
 
         self._last_drawn_rectangle: Optional[Rectangle] = None
+
+    def _get_default_image_selected_region(self) -> ImageSelectedRegion:
+        """Get the whole image as default image selected region"""
+        y_max_value, x_max_value, _ = self.figure.shape
+        return ImageSelectedRegion(x_1=0, y_1=0, x_2=x_max_value, y_2=y_max_value)
 
     def _update_spin_boxes(self):
         """Update all spin boxes with the current values from the selected region"""
@@ -156,7 +73,7 @@ class ImageWidgetWithSelector(ImageWidget):
     def _set_image(self):
         """Set and display current image as plot. Add rectangle selector."""
         app_logger.debug("Setting image in the image widget with selector")
-        self.canvas.axes.imshow(self.image.image)
+        self.canvas.axes.imshow(self.figure.image)
         rectangle_selector_event = RectangleSelector(self.canvas.axes, self._on_select, drawtype='box', button=[1, 3])
         plt.connect('key_press_event', rectangle_selector_event)
         self.main_layout.addWidget(self.canvas)
@@ -172,7 +89,7 @@ class ImageWidgetWithSelector(ImageWidget):
     def _configure_selected_region_spin_boxes(self) -> Tuple[QSpinBox, ...]:
         """Configure and return spin boxes for selected region coordinates"""
         widget_grid_places = (0, 0), (0, 1), (1, 0), (1, 1)
-        y_max_value, x_max_value, _ = self.image.shape
+        y_max_value, x_max_value, _ = self.figure.shape
         max_values = x_max_value, y_max_value, x_max_value, y_max_value
 
         configured_widgets: list[tuple[QLabel, QSpinBox]] = []

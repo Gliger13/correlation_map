@@ -3,8 +3,30 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from correlation_map.core.correlation.correlation_maker import CorrelationTypes
-from correlation_map.gui.core.image_widget import ImageSelectedRegion
+import cv2
+
+from correlation_map.gui.core.figure_widgets.image_with_selector_widget import ImageSelectedRegion
+
+
+class CorrelationTypes(Enum):
+    """Represents available correlation types, theis names and contestants in cv2"""
+
+    TM_SQDIFF = "square_difference_correlation", cv2.TM_SQDIFF
+    TM_SQDIFF_NORMED = "square_difference_normed_correlation", cv2.TM_SQDIFF_NORMED, True
+    TM_CCORR = "cross_correlation", cv2.TM_CCORR
+    TM_CCORR_NORMED = "cross_correlation_normed", cv2.TM_CCORR_NORMED
+    TM_CCOEFF = "correlation_coefficient", cv2.TM_CCOEFF
+    TM_CCOEFF_NORMED = "correlation_coefficient_normed", cv2.TM_CCOEFF_NORMED
+
+    def __init__(self, correlation_type: str, correlation_cv2_type: int, is_default: bool = False):
+        """
+        :param correlation_type: correlation type name
+        :param correlation_cv2_type: correlation constant in cv2
+        :param is_default: True if it's default correlation type else False
+        """
+        self.correlation_type = correlation_type
+        self.correlation_cv2_type = correlation_cv2_type
+        self.is_default = is_default
 
 
 class PreprocessorActions(Enum):
@@ -30,7 +52,7 @@ class CorrelationSettings(Enum):
         self.default_value = default_value
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CorrelationConfiguration:
     """Contains correlation configuration for building correlation map"""
     # Preprocessor actions

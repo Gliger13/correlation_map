@@ -1,4 +1,4 @@
-"""Contains custom error classes"""
+"""Contains custom project error classes"""
 from typing import Iterable, Optional
 
 

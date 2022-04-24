@@ -1,16 +1,25 @@
 """Contains vertical layout wrapper for all image widgets"""
+from typing import Mapping, Type
 
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
-from correlation_map.core.correlation.correlation_map import CorrelationMap
-from correlation_map.core.images.image import ImageTypes, ImageWrapper
-from correlation_map.core.images.image_container import ImageContainer
-from correlation_map.gui.core.correlation_map_widget import CorrelationMapWidget
+from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.models.figures.base_figure import BaseFigure
+from correlation_map.core.models.figures.correlation_map import CorrelationMap
+from correlation_map.core.models.figures.image import ImageWrapper
+from correlation_map.core.models.figures.figure_container import FigureContainer
+from correlation_map.gui.core.figure_widgets.base_figure_widget import BaseFigureWidget
+from correlation_map.gui.core.figure_widgets.correlation_map_widget import CorrelationMapWidget
+from correlation_map.gui.core.figure_widgets.image_widget import ImageWidget
 from correlation_map.gui.core.image_chooser import ImageChooserComboBox
-from correlation_map.gui.core.image_widget import ImageWidget
 from correlation_map.gui.tools.logger import app_logger
+
+FIGURE_AND_WIDGET_MAP: Mapping[Type[BaseFigure], Type[BaseFigureWidget]] = {
+    ImageWrapper: ImageWidget,
+    CorrelationMap: CorrelationMapWidget,
+}
 
 
 class ImageMainLayout(QVBoxLayout):
@@ -35,7 +44,7 @@ class ImageMainLayout(QVBoxLayout):
         self.__close_button_widget = QWidget()
         self.close_button = self.__configure_close_button(self.__close_button_widget)
 
-        self.image_widget = self.__configure_default_image_widget()
+        self.image_widget = self.__configure_default_figure_widget()
 
     def set_image(self, force_update: bool = False):
         """Set new image widget by type from the image chooser box
@@ -47,28 +56,32 @@ class ImageMainLayout(QVBoxLayout):
         """
         user_choice = self.image_chooser.currentText()
         app_logger.debug("User chosen `%s` in the image chooser", user_choice)
-        chosen_image_type = ImageTypes.get_by_name(user_choice)
+        chosen_image_type = FigureType.get_by_name(user_choice)
         if not chosen_image_type:
             app_logger.warning("Chosen wrong image type by image chooser box. Selected `%s`. Ignoring", user_choice)
             return None
-        if not force_update and self.image_widget.image.image_type == chosen_image_type:
+        if not force_update and self.image_widget.figure.figure_type == chosen_image_type:
             app_logger.debug("The selected image with type `%s` is the same as the current one. Ignoring",
-                             self.image_widget.image.image_type.value)
+                             self.image_widget.figure.figure_type.value)
             return None
         app_logger.info("Setting image with type `%s`", chosen_image_type.value)
-        image = ImageContainer.get(chosen_image_type)
-        if not image:
-            app_logger.error("Can't get and set chosen image with type %s by image chooser from the image container",
+        figure = FigureContainer.get(chosen_image_type)
+        if not figure:
+            app_logger.error("Can't get and set chosen figure with type %s by image chooser from the image container",
                              chosen_image_type.value)
             return None
         self.removeWidget(self.image_widget)
-        if isinstance(image, CorrelationMap):
-            widget_to_set = CorrelationMapWidget(image)
+
+        if figure_widget_class := FIGURE_AND_WIDGET_MAP.get(type(figure)):
+            widget_to_set = figure_widget_class(figure)
         else:
-            widget_to_set = ImageWidget(image)
+            app_logger.warning("Cannot set new figure widget. Unknown figure type. Given - `%s`, Expected on of `%s`",
+                               type(figure), FIGURE_AND_WIDGET_MAP.keys())
+            return None
+
         self.addWidget(widget_to_set)
         self.image_widget = widget_to_set
-        app_logger.info("Image with type `%s` was set", chosen_image_type.value)
+        app_logger.info("Figure with type `%s` was set as figure widget", chosen_image_type.value)
         return None
 
     def __configure_first_horizontal_layout(self) -> QHBoxLayout:
@@ -139,15 +152,15 @@ class ImageMainLayout(QVBoxLayout):
         self.first_right_horizontal_layout.addWidget(move_to_new_window_button)
         return move_to_new_window_button
 
-    def __configure_default_image_widget(self) -> ImageWidget:
+    def __configure_default_figure_widget(self) -> ImageWidget:
         """Configure and return image widget with default image"""
-        image = ImageContainer.get(ImageTypes.DEFAULT_IMAGE)
+        image = FigureContainer.get(FigureType.DEFAULT_IMAGE)
         if not image:
             app_logger.error("Can't get and set default image from the image container. "
                              "Creating new white image for that")
             white_image_array = np.full((500, 500, 3), 255, dtype=np.uint8)
-            image = ImageWrapper.create_image(white_image_array, ImageTypes.DEFAULT_IMAGE)
-            ImageContainer.add(image)
+            image = ImageWrapper.create_image(white_image_array, FigureType.DEFAULT_IMAGE)
+            FigureContainer.add(image)
         image_widget = ImageWidget(image)
         self.addWidget(image_widget)
         app_logger.debug("Image widget with default image has been set")

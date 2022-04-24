@@ -4,8 +4,8 @@ from typing import Dict
 from PyQt5.QtWidgets import QCheckBox, QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QRadioButton, QSpinBox, \
     QVBoxLayout, QWidget
 
-from correlation_map.core.config.correlation import CorrelationConfiguration, CorrelationSettings, PreprocessorActions
-from correlation_map.core.correlation.correlation_maker import CorrelationTypes
+from correlation_map.core.config.correlation import CorrelationConfiguration, CorrelationSettings, CorrelationTypes, \
+    PreprocessorActions
 from correlation_map.gui.tools.common import log_configuration_process
 from correlation_map.gui.tools.logger import app_logger
 

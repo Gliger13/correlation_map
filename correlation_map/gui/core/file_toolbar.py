@@ -3,8 +3,9 @@
 from PIL import UnidentifiedImageError
 from PyQt5.QtWidgets import QAction, QFileDialog, QToolBar
 
-from correlation_map.core.images.image import ImageTypes, ImageWrapper
-from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.models.figures.image import ImageWrapper
+from correlation_map.core.models.figures.figure_container import FigureContainer
 from correlation_map.gui.core.image_main_layout import ImageMainLayout
 from correlation_map.gui.core.save_images_dialog import SaveImagesDialog
 from correlation_map.gui.tools.logger import app_logger
@@ -48,13 +49,13 @@ class FileToolBar(QToolBar):
         app_logger.info("User chosen to save `%s` images",
                         {image_type.value for image_type in save_images_dialog.get_images_to_save()})
         for image_type_to_save in save_images_dialog.get_images_to_save():
-            for image in ImageContainer.get_all_user_images():
-                if image.image_type == image_type_to_save:
+            for image in FigureContainer.get_all_user_images():
+                if image.figure_type == image_type_to_save:
                     image.save(save_images_dialog.images_path_to_save)
         app_logger.info("All selected images saved")
 
     @classmethod
-    def _load_image(cls, image_type: ImageTypes):
+    def _load_image(cls, image_type: FigureType):
         """Load image from file dialog
 
         - Show a file dialog and let the user choose an image
@@ -79,7 +80,7 @@ class FileToolBar(QToolBar):
             app_logger.error("Cannot load file by path %s. Error: %s", image_path, error)
             return
 
-        ImageContainer.add(image)
+        FigureContainer.add(image)
         cls._update_widgets(image)
 
     @classmethod
@@ -90,14 +91,14 @@ class FileToolBar(QToolBar):
         """
         for image_layout in cls.__active_image_layouts:
             image_layout.image_chooser.update_items()
-            if image_layout.image_widget.image.image_type == new_image.image_type:
+            if image_layout.image_widget.figure.figure_type == new_image.figure_type:
                 image_layout.set_image(force_update=True)
 
     def __set_load_source_image_action(self):
         """Set action on file toolbar to select and load new source image"""
         load_source_image_action = QAction(self)
         load_source_image_action.setText("&Load source image")
-        load_source_image_action.triggered.connect(lambda: self._load_image(ImageTypes.SOURCE_IMAGE))
+        load_source_image_action.triggered.connect(lambda: self._load_image(FigureType.SOURCE_IMAGE))
         self.addAction(load_source_image_action)
         app_logger.debug("Load source image action connected")
 
@@ -105,7 +106,7 @@ class FileToolBar(QToolBar):
         """Set action on file toolbar to select and load new destination image"""
         load_destination_image_action = QAction(self)
         load_destination_image_action.setText("&Load destination image")
-        load_destination_image_action.triggered.connect(lambda: self._load_image(ImageTypes.DESTINATION_IMAGE))
+        load_destination_image_action.triggered.connect(lambda: self._load_image(FigureType.DESTINATION_IMAGE))
         self.addAction(load_destination_image_action)
         app_logger.debug("Load destination image action connected")
 

@@ -1,9 +1,10 @@
 """Module contains image builder class for transforming images"""
 import cv2
 import numpy as np
+from numpy import ndarray
 
-from correlation_map.core.images.image import ImageTypes, ImageWrapper
-from correlation_map.core.images.images_describer import ImageSelection
+from correlation_map.core.models.figures.image import FigureType, ImageWrapper
+from correlation_map.core.models.image_selected_region import ImageSelectedRegion
 
 
 class ImageBuilder:
@@ -34,48 +35,58 @@ class ImageBuilder:
         image_center = height / 2, weight / 2
         matrix = cv2.getRotationMatrix2D(image_center, angle, 1.0)
         rotated_image = cv2.warpAffine(image.image, matrix, (weight, height))
-        return ImageWrapper.create_image(rotated_image, ImageTypes.ROTATED_IMAGE)
+        return ImageWrapper.create_image(rotated_image, FigureType.ROTATED_IMAGE)
 
     @classmethod
-    def crop_image(cls, image: ImageWrapper, top_left: tuple[int, int], bottom_right: tuple[int, int]) -> ImageWrapper:
+    def crop_image(cls, image: ImageWrapper, image_selection: ImageSelectedRegion) -> ImageWrapper:
         """Crop image according to the given top left and bottom right region coordinates
 
         :param image: image to crop
-        :param top_left: tuple of x and y coordinates of the top left point in the image area to have
-        :param bottom_right: tuple of x and y coordinates of the bottom right point in the image area to have
+        :param image_selection: rectangle coordinates to crop
         :return: cropped image
         """
-        x1, y1 = top_left
-        x2, y2 = bottom_right
-        return ImageWrapper.create_image(
-            image.image[min(y1, y2):max(y1, y2), min(x1, x2):max(x1, x2)], ImageTypes.CROPPED_IMAGE)
+        return ImageWrapper.create_image(cls._crop_image(image.image, image_selection), FigureType.CROPPED_IMAGE)
 
     @classmethod
-    def mark_found_image(cls, image: ImageWrapper, image_selection: ImageSelection) -> ImageWrapper:
+    def mark_found_image(cls, image: ImageWrapper, image_selection: ImageSelectedRegion) -> ImageWrapper:
         """Mark the given region in the given image
 
         :param image: image to draw in it
         :param image_selection: image area coordinates to draw along the path
         :return: image with drawn area
         """
-        image_with_rectangle = ImageWrapper.create_image(image.image.copy(), ImageTypes.FOUND_IMAGE)
+        image_with_rectangle = ImageWrapper.create_image(image.image.copy(), FigureType.FOUND_IMAGE)
         cv2.rectangle(
             image_with_rectangle.image, image_selection.top_left_point, image_selection.bottom_right_point, 255, 2)
         return image_with_rectangle
 
     @classmethod
-    def crop_found_image(cls, source_image: ImageWrapper, image_selection: ImageSelection) -> ImageWrapper:
-        """TODO: Delete"""
-        cropped_image = source_image.image[
-                        min(image_selection.y1, image_selection.y2):max(image_selection.y1, image_selection.y2),
-                        min(image_selection.x1, image_selection.x2):max(image_selection.x1, image_selection.x2)]
-        return ImageWrapper.create_image(cropped_image, ImageTypes.FOUND_AND_CROPPED)
+    def crop_found_image(cls, image: ImageWrapper, image_selection: ImageSelectedRegion) -> ImageWrapper:
+        """Crop image according to the given image selection
+
+        :param image: image to crop
+        :param image_selection: rectangle coordinates to crop
+        :return: cropped found image
+        """
+        return ImageWrapper.create_image(cls._crop_image(image.image, image_selection), FigureType.FOUND_AND_CROPPED)
+
+    @classmethod
+    def _crop_image(cls, image: ndarray, image_selection: ImageSelectedRegion) -> ndarray:
+        """Crop image according to the given top left and bottom right region coordinates
+
+        :param image: image numpy arrays
+        :param image_selection: rectangle coordinates to crop
+        :return: cut image numpy arrays
+        """
+        return image[
+               min(image_selection.y_1, image_selection.y_2):max(image_selection.y_1, image_selection.y_2),
+               min(image_selection.x_1, image_selection.x_2):max(image_selection.x_1, image_selection.x_2)]
 
     @staticmethod
     def __make_gray_pixel(pixel: tuple[int, int, int]) -> tuple[int, int, int]:
         """Transform RGB pixel to gray
 
-        :param pixel: RGB pixel attribues
+        :param pixel: RGB pixel attributes
         :return: gray pixel attributes
         """
         red, green, blue = pixel

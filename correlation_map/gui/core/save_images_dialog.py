@@ -5,8 +5,8 @@ from typing import Optional
 from PyQt5.QtWidgets import QCheckBox, QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QLabel, QPushButton, \
     QVBoxLayout, QWidget
 
-from correlation_map.core.images.image import ImageTypes
-from correlation_map.core.images.image_container import ImageContainer
+from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.models.figures.figure_container import FigureContainer
 from correlation_map.gui.tools.common import log_configuration_process
 from correlation_map.gui.tools.logger import app_logger
 
@@ -20,7 +20,7 @@ class SaveImagesDialog(QDialog):
         self.images_path_to_save = os.getcwd()
 
         self._main_layout = self.__configure_main_layout()
-        if ImageContainer.is_contains_user_images():
+        if FigureContainer.is_contains_user_images():
             self.image_chooser_layout = self.__configure_image_chooser_layout()
             self.image_path_label = self.__configure_image_path_label()
             self.image_choose_button = self.__configure_image_choose_button()
@@ -46,18 +46,18 @@ class SaveImagesDialog(QDialog):
 
         if not image_path:
             app_logger.debug("User doesn't choose path")
-            return
+            return None
         app_logger.info("User chosen pat `%s` to save images", image_path)
         self.images_path_to_save = image_path
         self.image_path_label.setText(self.images_path_to_save)
         return image_path
 
-    def get_images_to_save(self) -> list[ImageTypes]:
+    def get_images_to_save(self) -> list[FigureType]:
         """Return images types to save from the checkboxes that user checked
 
         :return: list of image types that user checked
         """
-        return [ImageTypes.get_by_name(check_box.text()) for check_box in self.image_chooser_check_boxes
+        return [FigureType.get_by_name(check_box.text()) for check_box in self.image_chooser_check_boxes
                 if check_box.isChecked()]
 
     @log_configuration_process
@@ -116,8 +116,8 @@ class SaveImagesDialog(QDialog):
         self._main_layout.addWidget(to_save_label)
 
         check_boxes: list[QCheckBox] = []
-        for image_to_choose in ImageContainer.get_all_user_images():
-            check_box = QCheckBox(image_to_choose.image_type.value.capitalize())
+        for image_to_choose in FigureContainer.get_all_user_images():
+            check_box = QCheckBox(image_to_choose.figure_type.value.capitalize())
             check_box.setChecked(True)
             self._main_layout.addWidget(check_box)
             check_boxes.append(check_box)
