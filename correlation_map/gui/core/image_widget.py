@@ -102,6 +102,7 @@ class ImageWidget(QWidget):
     def _set_image(self):
         """Set and display current image as plot"""
         self.canvas.axes.imshow(self.image.image)
+        self.canvas.axes.set_title(self.image.image_type.value.capitalize())
         self.main_layout.addWidget(self.canvas)
 
 

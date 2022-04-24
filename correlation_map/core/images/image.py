@@ -17,11 +17,11 @@ class ImageTypes(Enum):
     DEFAULT_IMAGE = "default image"
     SOURCE_IMAGE = "source image"
     DESTINATION_IMAGE = "destination image"
-    CROPPED_IMAGE = "cropped image"
-    DETECTED_IMAGE = "detected image"
-    ROTATED_IMAGE = "rotated image"
-    FOUND_IMAGE = "found image"
-    FOUND_AND_CROPPED = "found and cropped image"
+    CROPPED_IMAGE = "source cropped image"
+    DETECTED_IMAGE = "destination detected image"
+    ROTATED_IMAGE = "destination rotated image"
+    FOUND_IMAGE = "destination found image"
+    FOUND_AND_CROPPED = "destination found and cropped image"
     CORRELATION_MAP = "correlation map"
 
     @classmethod
