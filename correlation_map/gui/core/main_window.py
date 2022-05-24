@@ -4,12 +4,12 @@ from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QWidget
 
 from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
-from correlation_map.core.models.figures.image import ImageWrapper
 from correlation_map.core.models.figures.figure_container import FigureContainer
-from correlation_map.gui.core.execution_toolbar import ExecutionToolBar
-from correlation_map.gui.core.file_toolbar import FileToolBar
+from correlation_map.core.models.figures.image import ImageWrapper
 from correlation_map.gui.core.image_main_layout import ImageMainLayout
 from correlation_map.gui.core.main_menu import MainMenu
+from correlation_map.gui.core.toolbars.execution_toolbar import ExecutionToolBar
+from correlation_map.gui.core.toolbars.file_toolbar import FileToolBar
 from correlation_map.gui.tools.common import delete_layout
 from correlation_map.gui.tools.logger import app_logger
 from correlation_map.gui.tools.path_factory import ProjectPathFactory
