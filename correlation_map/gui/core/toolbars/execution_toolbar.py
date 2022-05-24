@@ -26,8 +26,10 @@ class ExecutionToolBar(QToolBar):
         super().__init__()
         self.add_image_window_action = self.__set_add_image_window_action()
         self.run_action = self.__set_run_action()
-        self.stop_action = self.__set_stop_action()
-        self.terminate_action = self.__set_terminate_action()
+        # TODO: Uncomment them when they function will be implemented
+        # self.stop_action = self.__set_stop_action()
+        # self.terminate_action = self.__set_terminate_action()
+        self.analyze_action = self.__set_analyze_action()
 
     def check_for_loaded_source_and_destination_images(self) -> bool:
         """Check if user loaded source and destination images
