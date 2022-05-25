@@ -55,7 +55,7 @@ class CorrelationStartSettingsDialog(QDialog):
             if radio_button.isChecked():
                 return correlation_type
         app_logger.warning("Impossible design error. Checked correlation type not found. Using default one")
-        return next(correlation.correlation_type for correlation in CorrelationTypes if correlation.is_default)
+        return next(correlation for correlation in CorrelationTypes if correlation.is_default)
 
     def __configure_main_attributes(self):
         """Configure dialog main attributes"""

@@ -6,7 +6,10 @@ from PyQt5.QtWidgets import QAction, QMessageBox, QToolBar
 from correlation_map.core.config.correlation import CorrelationConfiguration
 from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
+from correlation_map.core.correlation.correlation_map_analyzer import CorrelationMapAnalyzer, \
+    CorrelationMapAnalyzesSettings
 from correlation_map.core.models.figures.figure_container import FigureContainer
+from correlation_map.gui.core.correlation_processes_dialogs.analyze_correlation_map import CorrelationMapAnalyzerDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_building_dialog import CorrelationBuildingDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_start_settings_dialog import \
     CorrelationStartSettingsDialog
@@ -110,6 +113,15 @@ class ExecutionToolBar(QToolBar):
         """
         self.__active_image_layouts.remove(image_layout)
 
+    def analyze_correlation_map(self):
+        """Analyze correlation map and build relative images"""
+        correlation_map_analysis_settings = CorrelationMapAnalyzerDialog()
+        correlation_map_analysis_settings.exec()
+        analyzes_settings = CorrelationMapAnalyzesSettings(search_limit=...)
+        CorrelationMapAnalyzer.build_images_with_difference(analyzes_settings)
+        for image_layout in self.__active_image_layouts:
+            image_layout.image_chooser.update_items()
+
     def __set_add_image_window_action(self):
         """Configure and return run correlation process action"""
         add_image_window_action = QAction(self)
@@ -124,8 +136,8 @@ class ExecutionToolBar(QToolBar):
         run_action = QAction(self)
         run_action.setText("&Run")
         run_icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.RUN_ICON_FILE_NAME))
-        run_action.triggered.connect(self.start_correlation_map_building_process)
         run_action.setIcon(run_icon)
+        run_action.triggered.connect(self.start_correlation_map_building_process)
         self.addAction(run_action)
         return run_action
 
@@ -146,3 +158,13 @@ class ExecutionToolBar(QToolBar):
         terminate_action.setIcon(terminate_icon)
         self.addAction(terminate_action)
         return terminate_action
+
+    def __set_analyze_action(self):
+        """Configure and return terminate correlation process action"""
+        analyze_action = QAction(self)
+        analyze_action.setText("&Analyze")
+        analyze_icon = QIcon(ProjectPathFactory.get_static_file_path(ProjectFileMapping.ANALYZE_ICON_FILE_NAME))
+        analyze_action.setIcon(analyze_icon)
+        analyze_action.triggered.connect(self.analyze_correlation_map)
+        self.addAction(analyze_action)
+        return analyze_action

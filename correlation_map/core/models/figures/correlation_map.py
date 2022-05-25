@@ -2,6 +2,7 @@
 import logging
 import math
 from collections import deque
+from functools import cached_property
 from typing import Optional
 
 import numpy as np
@@ -103,6 +104,18 @@ class CorrelationMap(BaseFigure):
                     source_cell, destination_cell = self.__make_equals(source_cell, destination_cell)
                 cell_correlation = correlation_method(source_cell, destination_cell)
                 self.correlation_map[i, j] = cell_correlation
+        np.repeat(self.correlation_map, self.pieces_amount)
+
+        # # Return shapes
+        # height_1, weight_1, _ = gray_source_matrix.shape
+        # height_2, weight_2, _ = gray_destination_matrix.shape
+        # if height_1 * weight_1 < height_2 * weight_2:
+        #     correlation_map = np.zeros((height_1, weight_1))
+        # else:
+        #     correlation_map = np.zeros((height_2, weight_2))
+        for i, row in enumerate(self.correlation_map):
+            for j, _ in enumerate(row):
+
         return self
 
     def configure_figure_axes(self, axes: Axes) -> Axes:
@@ -175,3 +188,6 @@ class CorrelationMap(BaseFigure):
         else:
             cell_2 = cell_1[:, :weight_2]
         return cell_1, cell_2
+
+    # @cached_property
+    # def extended_version(self):
