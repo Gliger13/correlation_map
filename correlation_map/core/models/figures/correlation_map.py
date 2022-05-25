@@ -61,11 +61,9 @@ class CorrelationMap(BaseFigure):
         height_2, weight_2, _ = destination_image.shape
 
         if height_1 * weight_1 < height_2 * weight_2:
-            self.correlation_map = np.zeros((
-                math.ceil(height_1 / self.pieces_amount), math.ceil(weight_1 / self.pieces_amount)))
+            self.correlation_map = np.zeros((height_1, weight_1))
         else:
-            self.correlation_map = np.zeros((
-                math.ceil(height_2 / self.pieces_amount), math.ceil(weight_2 / self.pieces_amount)))
+            self.correlation_map = np.zeros((height_2, weight_2))
 
     def build_correlation_map(self) -> "CorrelationMap":
         """Calculate correlation map
@@ -95,27 +93,22 @@ class CorrelationMap(BaseFigure):
         app_logger.debug("Calculating correlations between source and destination cells. To calculate correlation for "
                          "%s cells", cells_to_process)
         correlation_method = CorrelationMaker().__getattribute__(self.correlation_type.correlation_type)
-        for i, row in enumerate(self.correlation_map):
-            for j, _ in enumerate(row):
-                app_logger.debug("Calculated %s/%s cells", cells_to_process - len(source_cells), cells_to_process)
-                source_cell = source_cells.popleft()
-                destination_cell = destination_cells.popleft()
-                if source_cell.shape != destination_cell.shape:
-                    source_cell, destination_cell = self.__make_equals(source_cell, destination_cell)
-                cell_correlation = correlation_method(source_cell, destination_cell)
-                self.correlation_map[i, j] = cell_correlation
-        np.repeat(self.correlation_map, self.pieces_amount)
 
-        # # Return shapes
-        # height_1, weight_1, _ = gray_source_matrix.shape
-        # height_2, weight_2, _ = gray_destination_matrix.shape
-        # if height_1 * weight_1 < height_2 * weight_2:
-        #     correlation_map = np.zeros((height_1, weight_1))
-        # else:
-        #     correlation_map = np.zeros((height_2, weight_2))
-        for i, row in enumerate(self.correlation_map):
-            for j, _ in enumerate(row):
+        correlation_vector_deque: deque = deque()
+        for n, (source_cell, destination_cell) in enumerate(zip(source_cells, destination_cells)):
+            app_logger.debug("Calculated %s/%s cells", n, cells_to_process)
+            if source_cell.shape != destination_cell.shape:
+                source_cell, destination_cell = self.__make_equals(source_cell, destination_cell)
+            cell_correlation = correlation_method(source_cell, destination_cell)
+            correlation_vector_deque.append(cell_correlation)
 
+        for i, row in enumerate(range(0, len(self.correlation_map), self.pieces_amount)):
+            for _, column in enumerate(range(0, len(self.correlation_map[i]), self.pieces_amount)):
+                correlation_part = np.full((self.pieces_amount, self.pieces_amount), correlation_vector_deque.popleft())
+                map_part = self.correlation_map[row:row + self.pieces_amount, column:column + self.pieces_amount]
+                if map_part.shape != correlation_part.shape:
+                    map_part, correlation_part = self.__make_equals(map_part, correlation_part)
+                self.correlation_map[row:row + map_part.shape[0], column:column + map_part.shape[1]] = correlation_part
         return self
 
     def configure_figure_axes(self, axes: Axes) -> Axes:
@@ -179,15 +172,9 @@ class CorrelationMap(BaseFigure):
         """
         height_1, weight_1, *_ = cell_1.shape
         height_2, weight_2, *_ = cell_2.shape
-        if height_1 < height_2:
-            cell_2 = cell_2[:height_1]
-        else:
-            cell_1 = cell_1[:height_2]
-        if weight_1 < weight_2:
-            cell_2 = cell_2[:, :weight_1]
-        else:
-            cell_2 = cell_1[:, :weight_2]
-        return cell_1, cell_2
+        min_height = min(height_1, height_2)
+        min_weight = min(weight_1, weight_2)
+        return cell_1[:min_height, :min_weight], cell_2[:min_height, :min_weight]
 
     # @cached_property
     # def extended_version(self):
