@@ -270,10 +270,10 @@ class CorrelationMapPipelineBuilder:
         self.current_destination_image = FigureContainer.get(FigureType.DESTINATION_IMAGE)
 
         sub_pipelines: list[Callable[[], Generator[CurrentCorrelationStage, None, None]]] = []
-        if self.correlation_settings.chose_important_part:
-            sub_pipelines.append(self._crop_image)
         if self.correlation_settings.auto_rotate:
             sub_pipelines.append(self._rotate_image)
+        if self.correlation_settings.chose_important_part:
+            sub_pipelines.append(self._crop_image)
         if self.correlation_settings.auto_find:
             sub_pipelines.append(self._find_and_crop)
         sub_pipelines.append(self._build_correlation_map)
