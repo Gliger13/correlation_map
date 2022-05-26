@@ -6,6 +6,7 @@ import numpy as np
 
 from correlation_map.core.config.correlation import CorrelationTypes
 from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.images.image_builder import ImageBuilder
 from correlation_map.core.models.figures.image import ImageWrapper
 from correlation_map.core.models.image_selected_region import ImageSelectedRegion
 
@@ -62,14 +63,14 @@ class ImagesDescriber:
         :return: image region coordinates of the source image in the
             destination image
         """
-        res = cv2.matchTemplate(destination_image.image, source_image.image, type_of_correlation.correlation_cv2_type)
+        res = cv2.matchTemplate(source_image.image, destination_image.image, type_of_correlation.correlation_cv2_type)
         _, _, min_loc, max_loc = cv2.minMaxLoc(res)
-        height, weight, _ = destination_image.image.shape
+        height, weight, _ = source_image.image.shape
 
         # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
         if type_of_correlation in [CorrelationTypes.TM_SQDIFF, CorrelationTypes.TM_SQDIFF_NORMED]:
             x_1, y_1 = min_loc
         else:
             x_1, y_1 = max_loc
-        x_2, y_2 = x_1 + height, y_1 + weight
+        x_2, y_2 = x_1 + weight, y_1 + height
         return ImageSelectedRegion(x_1=x_1, y_1=y_1, x_2=x_2, y_2=y_2)
