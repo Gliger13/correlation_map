@@ -17,8 +17,8 @@ class ImageBuilder:
         :param image: image to make gray
         :return: image in gray scale
         """
-        gray_image = np.copy(image.image)
-        for column_number, column in enumerate(gray_image):
+        gray_image = np.zeros(image.shape[:2])
+        for column_number, column in enumerate(image.image):
             for row_number, pixel in enumerate(column):
                 gray_image[column_number, row_number] = cls.__make_gray_pixel(pixel)
         return ImageWrapper.create_image(gray_image)
@@ -83,12 +83,10 @@ class ImageBuilder:
                min(image_selection.x_1, image_selection.x_2):max(image_selection.x_1, image_selection.x_2)]
 
     @staticmethod
-    def __make_gray_pixel(pixel: tuple[int, int, int]) -> tuple[int, int, int]:
+    def __make_gray_pixel(pixel: tuple[int, int, int]) -> int:
         """Transform RGB pixel to gray
 
         :param pixel: RGB pixel attributes
         :return: gray pixel attributes
         """
-        red, green, blue = pixel
-        mean_intensity = round((int(red) + int(green) + int(blue)) / 3)
-        return mean_intensity, mean_intensity, mean_intensity
+        return round(sum(pixel) / len(pixel))
