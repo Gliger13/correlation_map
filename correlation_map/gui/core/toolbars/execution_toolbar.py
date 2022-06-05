@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import QAction, QMessageBox, QToolBar
 from correlation_map.core.config.correlation import CorrelationConfiguration
 from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
-from correlation_map.core.correlation.correlation_map_analyzer import CorrelationMapAnalyzer, \
-    CorrelationMapAnalyzesSettings
 from correlation_map.core.models.figures.figure_container import FigureContainer
 from correlation_map.gui.core.correlation_processes_dialogs.analyze_correlation_map import CorrelationMapAnalyzerDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_building_dialog import CorrelationBuildingDialog
@@ -117,10 +115,6 @@ class ExecutionToolBar(QToolBar):
         """Analyze correlation map and build relative images"""
         correlation_map_analysis_settings = CorrelationMapAnalyzerDialog()
         correlation_map_analysis_settings.exec()
-        analyzes_settings = CorrelationMapAnalyzesSettings(search_limit=...)
-        CorrelationMapAnalyzer.build_images_with_difference(analyzes_settings)
-        for image_layout in self.__active_image_layouts:
-            image_layout.image_chooser.update_items()
 
     def __set_add_image_window_action(self):
         """Configure and return run correlation process action"""

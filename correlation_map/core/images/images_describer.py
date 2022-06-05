@@ -6,7 +6,6 @@ import numpy as np
 
 from correlation_map.core.config.correlation import CorrelationTypes
 from correlation_map.core.config.figure_types import FigureType
-from correlation_map.core.images.image_builder import ImageBuilder
 from correlation_map.core.models.figures.image import ImageWrapper
 from correlation_map.core.models.image_selected_region import ImageSelectedRegion
 
