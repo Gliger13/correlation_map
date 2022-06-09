@@ -7,7 +7,6 @@ from correlation_map.core.config.correlation import CorrelationConfiguration
 from correlation_map.core.config.figure_types import FigureType
 from correlation_map.core.config.variables import ProjectFileMapping
 from correlation_map.core.models.figures.figure_container import FigureContainer
-from correlation_map.gui.core.correlation_processes_dialogs.analyze_correlation_map import CorrelationMapAnalyzerDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_building_dialog import CorrelationBuildingDialog
 from correlation_map.gui.core.correlation_processes_dialogs.correlation_start_settings_dialog import \
     CorrelationStartSettingsDialog
@@ -30,7 +29,7 @@ class ExecutionToolBar(QToolBar):
         # TODO: Uncomment them when they function will be implemented
         # self.stop_action = self.__set_stop_action()
         # self.terminate_action = self.__set_terminate_action()
-        self.analyze_action = self.__set_analyze_action()
+        # self.analyze_action = self.__set_analyze_action()
 
     def check_for_loaded_source_and_destination_images(self) -> bool:
         """Check if user loaded source and destination images
@@ -111,10 +110,10 @@ class ExecutionToolBar(QToolBar):
         """
         self.__active_image_layouts.remove(image_layout)
 
-    def analyze_correlation_map(self):
-        """Analyze correlation map and build relative images"""
-        correlation_map_analysis_settings = CorrelationMapAnalyzerDialog()
-        correlation_map_analysis_settings.exec()
+    # def analyze_correlation_map(self):
+    #     """Analyze correlation map and build relative images"""
+    #     correlation_map_analysis_settings = CorrelationMapAnalyzerDialog()
+    #     correlation_map_analysis_settings.exec()
 
     def __set_add_image_window_action(self):
         """Configure and return run correlation process action"""

@@ -96,8 +96,8 @@ class CorrelationMap(BaseFigure):
         correlation_method = CorrelationMaker().__getattribute__(self.correlation_type.correlation_type)
 
         correlation_vector_deque: deque = deque()
-        for n, (source_cell, destination_cell) in enumerate(zip(source_cells, destination_cells)):
-            app_logger.debug("Calculated %s/%s cells", n, cells_to_process)
+        for current_cell_number, (source_cell, destination_cell) in enumerate(zip(source_cells, destination_cells)):
+            app_logger.debug("Calculated %s/%s cells", current_cell_number, cells_to_process)
             cell_correlation = correlation_method(source_cell[0], destination_cell[0])
             correlation_vector_deque.append(cell_correlation)
 
