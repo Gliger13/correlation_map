@@ -110,4 +110,4 @@ As diploma work for Belarusian State University, faculty of Radiophysics and Com
 
 ## License
 
-**GNUv3**
+[**GNUv3**](LICENSE)
