@@ -1,72 +1,57 @@
+"""Module contains different correlation operations within a single class"""
 import math
-from enum import Enum
 
-import cv2
 import numpy as np
-
-
-class CorrelationTypes(Enum):
-    TM_SQDIFF = "square_difference_correlation"
-    TM_SQDIFF_NORMED = "square_difference_normed_correlation"
-    TM_CCORR = "cross_correlation"
-    TM_CCORR_NORMED = "cross_correlation_normed"
-    TM_CCOEFF = "correlation_coefficient"
-    TM_CCOEFF_NORMED = "correlation_coefficient_normed"
-
-
-class CorrelationCV2Types(Enum):
-    TM_SQDIFF = cv2.TM_SQDIFF
-    TM_SQDIFF_NORMED = cv2.TM_SQDIFF_NORMED
-    TM_CCORR = cv2.TM_CCORR
-    TM_CCORR_NORMED = cv2.TM_CCORR_NORMED
-    TM_CCOEFF = cv2.TM_CCOEFF
-    TM_CCOEFF_NORMED = cv2.TM_CCOEFF_NORMED
+from numpy import ndarray
 
 
 class CorrelationMaker:
-    @classmethod
-    def square_difference_correlation(cls, inten_m1, inten_m2) -> float:
-        numerator = float(np.sum(np.power(inten_m1 - inten_m2, 2)))
-        return numerator
+    """Provide different correlation methods"""
+
+    __slots__ = []
 
     @classmethod
-    def square_difference_normed_correlation(cls, inten_m1, inten_m2) -> float:
+    def square_difference_correlation(cls, x_array: ndarray, y_array: ndarray) -> float:
+        """Returns the square correlation coefficient for two matrices"""
+        return float(np.sum(np.power(x_array - y_array, 2)))
+
+    @classmethod
+    def square_difference_normed_correlation(cls, x_array: ndarray, y_array: ndarray) -> float:
         """Returns the normed correlation coefficient for two matrices"""
-        numerator = np.sum(np.power(inten_m1 - inten_m2, 2))
-        denominator1 = np.sum(np.power(inten_m1, 2))
-        denominator2 = np.sum(np.power(inten_m2, 2))
-        denominator = math.sqrt(denominator1 * denominator2)
-        return numerator / denominator
+        numerator = np.sum(np.power(x_array - y_array, 2))
+        first_denominator = np.sum(np.power(x_array, 2))
+        second_denominator = np.sum(np.power(y_array, 2))
+        denominator = math.sqrt(first_denominator * second_denominator)
+        return numerator / denominator if denominator != 0 else 1
 
     @classmethod
-    def cross_correlation(cls, inten_m1, inten_m2) -> float:
-        numerator = np.sum(inten_m1 * inten_m2)
-        return float(numerator)
+    def cross_correlation(cls, x_array: ndarray, y_array: ndarray) -> float:
+        """Returns the cross correlation coefficient for two matrices"""
+        return float(np.sum(x_array * y_array))
 
     @classmethod
-    def cross_correlation_normed(cls, inten_m1, inten_m2) -> float:
+    def cross_correlation_normed(cls, x_array: ndarray, y_array: ndarray) -> float:
         """Returns the normed correlation coefficient for two matrices"""
-        numerator = np.sum(inten_m1 * inten_m2)
-        denominator1 = np.sum(np.power(inten_m1, 2))
-        denominator2 = np.sum(np.power(inten_m2, 2))
-        denominator = math.sqrt(denominator1 * denominator2)
-        return numerator / denominator
+        numerator = np.sum(x_array * y_array)
+        first_denominator = np.sum(np.power(x_array, 2))
+        second_denominator = np.sum(np.power(y_array, 2))
+        denominator = math.sqrt(first_denominator * second_denominator)
+        return numerator / denominator if denominator != 0 else 1
 
     @classmethod
-    def correlation_coefficient(cls, inten_m1, inten_m2) -> float:
+    def correlation_coefficient(cls, x_array: ndarray, y_array: ndarray) -> float:
         """Returns the correlation coefficient for two matrices"""
-        avg_intensity1 = np.sum(inten_m1) / np.size(inten_m1)
-        avg_intensity2 = np.sum(inten_m2) / np.size(inten_m2)
-        numerator = float(np.sum((inten_m1 - avg_intensity1) * (inten_m2 - avg_intensity2)))
-        return numerator
+        x_average = np.sum(x_array) / np.size(x_array)
+        y_average = np.sum(y_array) / np.size(y_array)
+        return float(np.sum((x_array - x_average) * (y_array - y_average)))
 
     @classmethod
-    def correlation_coefficient_normed(cls, inten_m1, inten_m2) -> float:
+    def correlation_coefficient_normed(cls, x_array: ndarray, y_array: ndarray) -> float:
         """Returns the normed correlation coefficient for two matrices"""
-        avg_intensity1 = np.sum(inten_m1) / np.size(inten_m1)
-        avg_intensity2 = np.sum(inten_m2) / np.size(inten_m2)
-        numerator = np.sum((inten_m1 - avg_intensity1) * (inten_m2 - avg_intensity2))
-        denominator1 = np.sum(np.power(inten_m1 - avg_intensity1, 2))
-        denominator2 = np.sum(np.power(inten_m2 - avg_intensity2, 2))
-        denominator = math.sqrt(denominator1 * denominator2)
+        x_average = np.sum(x_array) / np.size(x_array)
+        y_average = np.sum(y_array) / np.size(y_array)
+        numerator = np.sum((x_array - x_average) * (y_array - y_average))
+        first_denominator = np.sum(np.power(x_array - x_average, 2))
+        second_denominator = np.sum(np.power(y_array - y_average, 2))
+        denominator = math.sqrt(first_denominator * second_denominator)
         return numerator / denominator if denominator != 0 else 1

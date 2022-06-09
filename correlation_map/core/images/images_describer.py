@@ -1,72 +1,75 @@
+"""Contains image describer which returns or calculates different image attributes"""
 import math
-from typing import Tuple
 
 import cv2
 import numpy as np
 
-from core.correlation.correlation_maker import CorrelationCV2Types
-from core.images.image import Image, ImageTypes
-
-
-class ImageSelection:
-    def __init__(self, x1: int = None, y1: int = None, x2: int = None, y2: int = None):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-
-    @property
-    def bottom_right_point(self) -> Tuple[int, int]:
-        return self.x1, self.y1
-
-    @property
-    def top_left_point(self) -> Tuple[int, int]:
-        return self.x2, self.y2
+from correlation_map.core.config.correlation import CorrelationTypes
+from correlation_map.core.config.figure_types import FigureType
+from correlation_map.core.models.figures.image import ImageWrapper
+from correlation_map.core.models.image_selected_region import ImageSelectedRegion
 
 
 class ImagesDescriber:
+    """Contains actions to return or calculate different images attributes"""
+
     @classmethod
-    def find_rotation_angle(cls, src_image: Image, dst_image: Image, descriptor_lines: int = 0) -> Tuple[float, Image]:
+    def find_rotation_angle(cls, source_image: ImageWrapper, destination_image: ImageWrapper,
+                            descriptor_lines: int = 0) -> tuple[float, ImageWrapper]:
         """
-        Return the angle of rotation of the img2 relative to img1
+        Return the angle of rotation of the source image relative to destination image
         """
-        # Use descriptor for detecting the img2 in img1
+        # Use descriptor for detecting the source image in the destination image
         orb = cv2.ORB_create()
-        kpt1, des1 = orb.detectAndCompute(src_image.image, None)
-        kpt2, des2 = orb.detectAndCompute(dst_image.image, None)
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        matches = bf.match(des1, des2)
-        matches = sorted(matches, key=lambda x: x.distance)
+        src_image_key_points, src_image_descriptors = orb.detectAndCompute(source_image.image, None)
+        dst_image_key_points, dst_image_descriptors = orb.detectAndCompute(destination_image.image, None)
+        brute_force_match = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        matches = brute_force_match.match(src_image_descriptors, dst_image_descriptors)
+        matches = sorted(matches, key=lambda match: match.distance)
         # Show both images with the result work of descriptor
         if not descriptor_lines:
             descriptor_lines = 0
         elif descriptor_lines > len(matches):
             descriptor_lines = matches
-        output_image = 0
-        output_image = cv2.drawMatches(src_image.image, kpt1, dst_image.image, kpt2, matches[:descriptor_lines],
-                                       output_image, flags=2)
-        descriptor_image = Image.create_image(output_image, ImageTypes.DETECTED_IMAGE)
+        output_image = cv2.drawMatches(
+            img1=source_image.image,
+            keypoints1=src_image_key_points,
+            img2=destination_image.image,
+            keypoints2=dst_image_key_points,
+            matches1to2=matches[:descriptor_lines],
+            outImg=None,
+            flags=2,
+        )
+        descriptor_image = ImageWrapper.create_image(output_image, FigureType.DETECTED_IMAGE)
         # Calculation angle
-        src_pts = np.float32([kpt1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-        dst_pts = np.float32([kpt2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
+        src_pts = np.float32([src_image_key_points[match.queryIdx].pt for match in matches]).reshape(-1, 1, 2)
+        dst_pts = np.float32([dst_image_key_points[match.trainIdx].pt for match in matches]).reshape(-1, 1, 2)
 
-        matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+        matrix, _ = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
         theta = - math.atan2(matrix[0, 1], matrix[0, 0]) * 180 / math.pi
         return theta, descriptor_image
 
     @classmethod
-    def find_image_points(cls, source_image: Image, destination_image: Image,
-                          type_of_correlation: str) -> ImageSelection:
-        res = cv2.matchTemplate(source_image.image, destination_image.image,
-                                CorrelationCV2Types[type_of_correlation].value)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        h, w, _ = destination_image.image.shape
+    def find_image_points(cls, source_image: ImageWrapper, destination_image: ImageWrapper,
+                          type_of_correlation: CorrelationTypes) -> ImageSelectedRegion:
+        """Find image points of the source image in the destination image
+
+        :param source_image: source image to find in the destination
+        :param destination_image: destination image to find image area of
+            source image
+        :param type_of_correlation: correlation type to use while matching
+            source image in the destination one
+        :return: image region coordinates of the source image in the
+            destination image
+        """
+        res = cv2.matchTemplate(source_image.image, destination_image.image, type_of_correlation.correlation_cv2_type)
+        _, _, min_loc, max_loc = cv2.minMaxLoc(res)
+        height, weight, _ = source_image.image.shape
 
         # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
-        image_selection = ImageSelection()
-        if CorrelationCV2Types[type_of_correlation].value in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
-            image_selection.x1, image_selection.y1 = min_loc
+        if type_of_correlation in [CorrelationTypes.TM_SQDIFF, CorrelationTypes.TM_SQDIFF_NORMED]:
+            x_1, y_1 = min_loc
         else:
-            image_selection.x1, image_selection.y1 = max_loc
-        image_selection.x2, image_selection.y2 = image_selection.x1 + w, image_selection.y1 + h
-        return image_selection
+            x_1, y_1 = max_loc
+        x_2, y_2 = x_1 + weight, y_1 + height
+        return ImageSelectedRegion(x_1=x_1, y_1=y_1, x_2=x_2, y_2=y_2)
